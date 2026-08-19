@@ -1,0 +1,285 @@
+const fs = require('fs');
+const path = require('path');
+
+const DB_FILE = path.join(__dirname, 'data_store.json');
+
+const INITIAL_DATA = {
+  stats: {
+    totalTasksCompleted: 142850,
+    activeOperators: 284,
+    globalModelAccuracy: 99.4,
+    avgTurnaroundMinutes: 4.8,
+    costSavingsPercentage: 72,
+    activePilots: 18
+  },
+  users: [
+    {
+      id: "usr_admin",
+      name: "Operations Commander",
+      email: "admin@trainedforce.com",
+      role: "admin",
+      badge: "Ops Lead",
+      avatar: "👑"
+    },
+    {
+      id: "usr_client_1",
+      name: "Sarah Jenkins",
+      company: "Acuity Health SaaS (US)",
+      email: "sarah@acuityhealth.io",
+      role: "client",
+      balance: 14500,
+      avatar: "💼"
+    },
+    {
+      id: "usr_worker_1",
+      name: "Bilal Tariq",
+      email: "bilal@trainedforce.com",
+      role: "worker",
+      badge: "Senior Tier-3 Operator (Pakistan)",
+      accuracy: 99.6,
+      tasksCompleted: 3410,
+      specialty: "Finance & Data Extraction QA",
+      avatar: "⚡"
+    },
+    {
+      id: "usr_worker_2",
+      name: "Fatima Noor",
+      email: "fatima@trainedforce.com",
+      role: "worker",
+      badge: "Lead AI Evaluator (Pakistan)",
+      accuracy: 99.8,
+      tasksCompleted: 4890,
+      specialty: "Customer Support & Content Moderation",
+      avatar: "🌟"
+    }
+  ],
+  services: [
+    {
+      id: "srv_support",
+      name: "AI Customer Support Triaging & Escalation QA",
+      category: "Customer Support",
+      description: "AI drafts tier-1 & 2 responses; trained human operators verify tone, policy compliance, and resolve complex exceptions with < 5 min SLA.",
+      sla: "5 mins",
+      accuracyTarget: "99.5%",
+      basePrice: "$0.45 / resolution"
+    },
+    {
+      id: "srv_finance",
+      name: "Invoice & Receipt Reconciliation Audit",
+      category: "Finance & Accounting",
+      description: "Extract line items, match POs across ERPs, verify tax calculations, and flag anomalies with human certified sign-off.",
+      sla: "15 mins",
+      accuracyTarget: "99.9%",
+      basePrice: "$0.85 / document"
+    },
+    {
+      id: "srv_ecommerce",
+      name: "E-Commerce Catalog Enrichment & Taxonomy QA",
+      category: "E-Commerce",
+      description: "Multilingual attribute tagging, competitor pricing cross-checks, image compliance verification, and SEO metadata generation.",
+      sla: "2 hours",
+      accuracyTarget: "99.0%",
+      basePrice: "$0.30 / SKU"
+    },
+    {
+      id: "srv_revops",
+      name: "RevOps B2B Lead Enrichment & Signal Verification",
+      category: "Sales & RevOps",
+      description: "AI scrapes executive career moves and tech stacks; operators verify decision maker contacts and company fit criteria.",
+      sla: "1 hour",
+      accuracyTarget: "98.8%",
+      basePrice: "$0.65 / lead"
+    },
+    {
+      id: "srv_aiqa",
+      name: "LLM RLHF & Ground-Truth Verification",
+      category: "AI & ML Data",
+      description: "Rigorous human evaluation of model outputs, hallucination checks, safety tagging, and specialized domain annotation.",
+      sla: "Custom",
+      accuracyTarget: "99.8%",
+      basePrice: "$1.20 / annotation"
+    }
+  ],
+  tasks: [
+    {
+      id: "TSK-8921",
+      title: "Healthtech HIPAA Invoice Match & Discrepancy Flag",
+      serviceId: "srv_finance",
+      clientId: "usr_client_1",
+      clientName: "Acuity Health SaaS",
+      workerId: "usr_worker_1",
+      workerName: "Bilal Tariq",
+      status: "verified",
+      priority: "High",
+      createdAt: "2026-08-19T20:15:00Z",
+      completedAt: "2026-08-19T20:21:00Z",
+      turnaroundSeconds: 360,
+      accuracyScore: 100,
+      inputSummary: "Vendor Invoice #INV-9904 vs PO-4481. Total amount mismatch: $14,230 vs $14,200.",
+      aiDraft: "Extracted line item 4 tax delta ($30.00 expedited freight fee not authorized on original PO). Recommended action: Hold payment and trigger Vendor Clarification Notice.",
+      operatorNotes: "Confirmed PO-4481 freight terms specify FOB Destination. AI correctly caught $30 freight variance. Passed verification checklist.",
+      auditLog: [
+        { time: "2026-08-19T20:15:00Z", action: "Task Ingested via Client API", actor: "System" },
+        { time: "2026-08-19T20:15:04Z", action: "AI Pipeline Extraction & Draft Generated (Confidence 98.2%)", actor: "Gemini 2.5 Pro Pipeline" },
+        { time: "2026-08-19T20:16:30Z", action: "Claimed for Human QA Verification", actor: "Bilal Tariq (Operator #PK-219)" },
+        { time: "2026-08-19T20:21:00Z", action: "Quality Checklist Passed & Verified (100% Accuracy)", actor: "Bilal Tariq" }
+      ]
+    },
+    {
+      id: "TSK-8922",
+      title: "Urgent SLA Escalation: Tier-2 Refund Policy Exception",
+      serviceId: "srv_support",
+      clientId: "usr_client_1",
+      clientName: "Acuity Health SaaS",
+      workerId: "usr_worker_2",
+      workerName: "Fatima Noor",
+      status: "verified",
+      priority: "Urgent",
+      createdAt: "2026-08-19T21:40:00Z",
+      completedAt: "2026-08-19T21:44:12Z",
+      turnaroundSeconds: 252,
+      accuracyScore: 99.5,
+      inputSummary: "Enterprise customer requesting refund for 4 enterprise licenses after 35-day window citing delayed onboarding.",
+      aiDraft: "Standard policy: Disallow refunds beyond 30 days. Proposed compromise: Credit 1 month extension to avoid churn.",
+      operatorNotes: "Checked CRM history: Account has $120k ARR lifetime value. Authorized 1-month credit extension and notified Account Executive. Tone calibrated for high-touch partner.",
+      auditLog: [
+        { time: "2026-08-19T21:40:00Z", action: "Zendesk Webhook Received", actor: "System" },
+        { time: "2026-08-19T21:40:08Z", action: "AI Generated Draft & Customer Sentiment Analysis", actor: "AI Core" },
+        { time: "2026-08-19T21:41:00Z", action: "Claimed by Senior Operator", actor: "Fatima Noor" },
+        { time: "2026-08-19T21:44:12Z", action: "Verified & Dispatched to Zendesk API", actor: "Fatima Noor" }
+      ]
+    },
+    {
+      id: "TSK-8923",
+      title: "E-Commerce Luxury Footwear Taxonomy & Attribute Tagging",
+      serviceId: "srv_ecommerce",
+      clientId: "usr_client_1",
+      clientName: "Acuity Health SaaS",
+      workerId: null,
+      workerName: null,
+      status: "in_worker_review",
+      priority: "Normal",
+      createdAt: "2026-08-19T22:30:00Z",
+      completedAt: null,
+      turnaroundSeconds: null,
+      accuracyScore: null,
+      inputSummary: "Batch of 45 new Italian leather footwear SKUs needing Google Merchant taxonomy, material composition, and SEO title optimization.",
+      aiDraft: "AI generated 45 attribute sets. Flagged SKU #IT-9012 for ambiguous sole material (Rubber vs Polyurethane).",
+      operatorNotes: "",
+      auditLog: [
+        { time: "2026-08-19T22:30:00Z", action: "Batch Catalog CSV Ingested", actor: "Client Portal" },
+        { time: "2026-08-19T22:31:00Z", action: "AI Auto-Classification Complete (94.8% Confidence)", actor: "AI Pipeline" },
+        { time: "2026-08-19T22:32:00Z", action: "Awaiting Operator Claim in QA Queue", actor: "Dispatch System" }
+      ]
+    },
+    {
+      id: "TSK-8924",
+      title: "B2B SaaS Security Compliance Matrix Cross-Verification",
+      serviceId: "srv_aiqa",
+      clientId: "usr_client_1",
+      clientName: "Acuity Health SaaS",
+      workerId: null,
+      workerName: null,
+      status: "ai_processing",
+      priority: "High",
+      createdAt: "2026-08-19T23:10:00Z",
+      completedAt: null,
+      turnaroundSeconds: null,
+      accuracyScore: null,
+      inputSummary: "SOC2 Type II vs ISO 27001 mapping for 28 vendor sub-processors.",
+      aiDraft: "Processing automated cross-referencing against NIST SP 800-53 controls...",
+      operatorNotes: "",
+      auditLog: [
+        { time: "2026-08-19T23:10:00Z", action: "Document Uploaded", actor: "Client" },
+        { time: "2026-08-19T23:10:15Z", action: "AI Ingestion in Progress", actor: "Pipeline" }
+      ]
+    }
+  ],
+  sops: [
+    {
+      id: "sop_finance_1",
+      title: "Invoice Mismatch & PO Variance Protocol v3.2",
+      category: "Finance & Accounting",
+      version: "3.2",
+      updatedAt: "2026-08-15",
+      rules: [
+        "Variances under $5.00 due to rounding: Auto-approve with note.",
+        "Freight/shipping discrepancies > $10.00: Compare against FOB terms on PO. Flag for client review if unapproved.",
+        "Tax rate mismatch: Verify state/provincial tax ID before manual adjustment."
+      ]
+    },
+    {
+      id: "sop_support_1",
+      title: "High-LTV Customer De-escalation & Concession Guide",
+      category: "Customer Support",
+      version: "2.1",
+      updatedAt: "2026-08-10",
+      rules: [
+        "Never cite policy rigidity to Tier-1 enterprise accounts ($50k+ ARR).",
+        "Offer service extension credits up to 30 days without manager escalation.",
+        "Ensure human response tone is empathetic, concise, and solution-focused."
+      ]
+    },
+    {
+      id: "sop_data_1",
+      title: "LLM Hallucination Detection & Ground-Truth Annotation",
+      category: "AI & ML Data",
+      version: "4.0",
+      updatedAt: "2026-08-18",
+      rules: [
+        "Every factual claim must cite a verified source URL or provided context document.",
+        "Score hallucinations on a 1-5 severity scale (1=harmless typo, 5=dangerous fabrication).",
+        "Check mathematical calculations with built-in sandbox verifier before QA sign-off."
+      ]
+    }
+  ],
+  discoveryRecords: [
+    {
+      id: "disc_101",
+      company: "Vanguard Logistics",
+      industry: "Supply Chain",
+      role: "VP Operations",
+      workflow: "Bill of Lading & Customs Exception Clearance",
+      currentCostMonthly: "$18,500",
+      hoursPerWeek: 45,
+      painScore: 38,
+      recommendation: "High Priority - Immediate Pilot Candidate",
+      status: "Pilot Scheduled"
+    }
+  ]
+};
+
+function loadData() {
+  try {
+    if (!fs.existsSync(DB_FILE)) {
+      saveData(INITIAL_DATA);
+      return INITIAL_DATA;
+    }
+    const raw = fs.readFileSync(DB_FILE, 'utf8');
+    return JSON.parse(raw);
+  } catch (err) {
+    console.error("Error loading DB, reverting to initial data", err);
+    return INITIAL_DATA;
+  }
+}
+
+function saveData(data) {
+  try {
+    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
+  } catch (err) {
+    console.error("Error saving DB", err);
+  }
+}
+
+const db = {
+  get: loadData,
+  set: saveData,
+  update: (fn) => {
+    const data = loadData();
+    const result = fn(data);
+    saveData(data);
+    return result;
+  }
+};
+
+module.exports = db;

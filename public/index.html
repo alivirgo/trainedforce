@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrainedForce — AI Workforce Verification & Deployment Platform</title>
+  <meta name="description" content="TrainedForce: Outsource repetitive knowledge work fulfilled by AI-assisted Pakistani & global operators with verified accuracy, SOP adherence, and audit trails.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Live Telemetry Bar -->
+  <div class="telemetry-bar">
+    <div class="container telemetry-content">
+      <div class="telemetry-item">
+        <span class="pulse-dot" style="color: #10b981;"></span>
+        <span>Global Pipeline Status: <strong style="color: #34d399;">OPERATIONAL</strong></span>
+      </div>
+      <div class="telemetry-item">
+        <span>Verified Accuracy:</span>
+        <span class="telemetry-val" id="telemetry-accuracy">99.4%</span>
+      </div>
+      <div class="telemetry-item">
+        <span>Active Operators:</span>
+        <span class="telemetry-val" id="telemetry-operators">284 Online</span>
+      </div>
+      <div class="telemetry-item">
+        <span>Avg Turnaround:</span>
+        <span class="telemetry-val" id="telemetry-speed">4.8 mins</span>
+      </div>
+      <div class="telemetry-item">
+        <span>Total Verified Deliveries:</span>
+        <span class="telemetry-val" id="telemetry-tasks">142,850+</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <div class="brand-logo" onclick="switchTab('overview')">
+        <div class="logo-bolt">⚡</div>
+        <div>
+          <span>TrainedForce</span>
+          <span class="brand-domain">trainedforce.com</span>
+        </div>
+      </div>
+
+      <ul class="nav-links">
+        <li><button class="nav-item-btn active" id="nav-overview" onclick="switchTab('overview')">🌐 Platform</button></li>
+        <li><button class="nav-item-btn" id="nav-client" onclick="switchTab('client')">💼 Client Studio</button></li>
+        <li><button class="nav-item-btn" id="nav-worker" onclick="switchTab('worker')">⚡ Operator Workbench</button></li>
+        <li><button class="nav-item-btn" id="nav-discovery" onclick="switchTab('discovery')">📊 Discovery & ROI</button></li>
+        <li><button class="nav-item-btn" id="nav-admin" onclick="switchTab('admin')">⚙️ Operations CMS</button></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="role-switcher-btn" onclick="openModal('modal-auth')">
+          <span id="current-user-avatar">💼</span>
+          <span id="current-user-name">Sarah (Client)</span>
+          <span style="font-size: 0.7rem; color: var(--primary);">▼</span>
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="openNewTaskModal()">+ Launch Task</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="container">
+
+    <!-- ========================================================================= -->
+    <!-- TAB 1: PLATFORM OVERVIEW (LANDING / HERO)                                 -->
+    <!-- ========================================================================= -->
+    <section id="panel-overview" class="tab-panel active-panel">
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="hero-grid">
+          <div>
+            <div class="hero-tag">
+              <span class="pulse-dot" style="color: var(--primary);"></span>
+              <span>Enterprise AI Workforce Verification & Deployment</span>
+            </div>
+            <h1 class="hero-title">
+              Outsource Knowledge Work With <span class="gradient-text">Human-in-the-Loop</span> AI Precision.
+            </h1>
+            <p class="hero-desc">
+              We bridge foreign SMEs with elite AI-assisted Pakistani and global operators. Automate repetitive finance, support, e-commerce, and data workflows with strict SOP compliance and guaranteed 99%+ accuracy.
+            </p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" onclick="switchTab('client')">
+                🚀 Deploy Verified Workforce
+              </button>
+              <button class="btn btn-purple" onclick="switchTab('worker')">
+                ⚡ Join as Certified AI Operator
+              </button>
+              <button class="btn btn-outline" onclick="switchTab('discovery')">
+                📈 Calculate Workflow ROI
+              </button>
+            </div>
+
+            <div class="hero-stats-row">
+              <div class="hero-stat-card">
+                <div class="hero-stat-num">99.4%</div>
+                <div class="hero-stat-label">Verified Accuracy</div>
+              </div>
+              <div class="hero-stat-card">
+                <div class="hero-stat-num">&lt; 5 min</div>
+                <div class="hero-stat-label">Avg Task SLA</div>
+              </div>
+              <div class="hero-stat-card">
+                <div class="hero-stat-num">72%</div>
+                <div class="hero-stat-label">Labor Cost Savings</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-visual-card">
+            <img src="/assets/hero-dashboard.jpg" alt="TrainedForce Command Center Dashboard" class="hero-img">
+            <div class="hero-floating-badge">
+              <div>
+                <div style="font-weight: 700; font-size: 0.92rem; color: #fff;">TrainedForce Command Center</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted);">Real-time Telemetry & QA Dispatch</div>
+              </div>
+              <span class="status-pill pill-green"><span class="pulse-dot"></span> LIVE 284 QUEUES</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pipeline Architecture Section -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-subtitle">How TrainedForce Works</span>
+          <h2 class="section-title">The 4-Step Verified Workflow Engine</h2>
+          <p class="section-desc">
+            We don't replace humans with AI or outsource blindly. We engineer a closed-loop verification pipeline with automated drafts, human review checkpoints, and immutable audit logs.
+          </p>
+        </div>
+
+        <div class="pipeline-visual-container">
+          <div class="pipeline-diagram-box">
+            <img src="/assets/workflow-pipeline.jpg" alt="TrainedForce AI Workflow Pipeline Architecture" class="pipeline-diagram-img">
+          </div>
+
+          <div class="pipeline-steps-list">
+            <div class="pipeline-step-item">
+              <div class="step-number">01</div>
+              <div class="step-info">
+                <h4>Client Task & Context Ingestion</h4>
+                <p>Submit tickets, documents, invoices, or batch CSVs via REST API, Webhooks, or Client Studio with custom SOP guidelines.</p>
+              </div>
+            </div>
+
+            <div class="pipeline-step-item">
+              <div class="step-number">02</div>
+              <div class="step-info">
+                <h4>AI Model Inference & Auto-Drafting</h4>
+                <p>Gemini Pro/Flash extraction models parse structured inputs, classify intents, and generate initial draft resolutions.</p>
+              </div>
+            </div>
+
+            <div class="pipeline-step-item">
+              <div class="step-number">03</div>
+              <div class="step-info">
+                <h4>Human Operator Expert QA Verification</h4>
+                <p>Trained Pakistani operators audit the AI output against client acceptance criteria, resolve edge cases, and correct hallucinations.</p>
+              </div>
+            </div>
+
+            <div class="pipeline-step-item">
+              <div class="step-number">04</div>
+              <div class="step-info">
+                <h4>Verified Deliverables & Immutable Audit Trail</h4>
+                <p>Outputs are delivered to your CRM or ERP with cryptographic verification logs, worker attribution, and accuracy scores.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Service Catalog Section -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-subtitle">Workflow Solutions</span>
+          <h2 class="section-title">High-Friction Workflows We Fulfill & Verify</h2>
+          <p class="section-desc">Standardized turn-key workflows optimized for speed, security, and measurable ROI.</p>
+        </div>
+
+        <div class="services-grid" id="services-grid-overview">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+
+      <!-- Pakistani Operator Hub Spotlight -->
+      <div class="section" style="background: rgba(14, 21, 38, 0.4); border-radius: var(--radius-lg); padding: 50px; border: 1px solid var(--border-color);">
+        <div class="hero-grid">
+          <div class="hero-visual-card">
+            <img src="/assets/operator-hub.jpg" alt="TrainedForce Global AI Operator Workstation" class="hero-img">
+          </div>
+          <div>
+            <span class="section-subtitle">Workforce Verification</span>
+            <h2 class="section-title">Pakistan's Premier AI-Assisted Operations Talent</h2>
+            <p class="hero-desc">
+              We recruit, test, and upskill high-aptitude knowledge workers in Pakistan with specialized AI workflows, strict HIPAA/GDPR data handling protocols, and continuous performance telemetry.
+            </p>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
+              <li style="display: flex; gap: 10px; align-items: center;">
+                <span style="color: var(--accent-emerald);">✔</span> <strong>Pre-Vetted Aptitude:</strong> Multi-stage SOP adherence & prompt QA exams.
+              </li>
+              <li style="display: flex; gap: 10px; align-items: center;">
+                <span style="color: var(--accent-emerald);">✔</span> <strong>Real-Work Scoring:</strong> Measured on accuracy, speed, and rework rate — not paper credentials.
+              </li>
+              <li style="display: flex; gap: 10px; align-items: center;">
+                <span style="color: var(--accent-emerald);">✔</span> <strong>Dedicated Squads:</strong> Scale from a single pilot operator to a 50-person enterprise squad in 48 hours.
+              </li>
+            </ul>
+            <button class="btn btn-purple" onclick="switchTab('worker')">Take Operator Qualification Test</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 2: CLIENT PORTAL (OUTSOURCING STUDIO)                                -->
+    <!-- ========================================================================= -->
+    <section id="panel-client" class="tab-panel">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin: 40px 0 25px;">
+        <div>
+          <h2>💼 Enterprise Client Studio</h2>
+          <p style="color: var(--text-muted);">Manage your active AI workforce pipelines, post new workflow batches, and review verified deliverables.</p>
+        </div>
+        <button class="btn btn-primary" onclick="openNewTaskModal()">+ Submit New Task Batch</button>
+      </div>
+
+      <!-- Quick Metrics Cards -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px;">
+        <div class="glass-panel" style="padding: 20px;">
+          <div style="color: var(--text-dim); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Active Pipeline Tasks</div>
+          <div style="font-size: 2rem; font-weight: 800; color: #fff; font-family: var(--font-mono);" id="client-active-count">3</div>
+        </div>
+        <div class="glass-panel" style="padding: 20px;">
+          <div style="color: var(--text-dim); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Verified Deliverables</div>
+          <div style="font-size: 2rem; font-weight: 800; color: var(--accent-emerald); font-family: var(--font-mono);" id="client-verified-count">2</div>
+        </div>
+        <div class="glass-panel" style="padding: 20px;">
+          <div style="color: var(--text-dim); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Average Quality Score</div>
+          <div style="font-size: 2rem; font-weight: 800; color: var(--primary); font-family: var(--font-mono);">99.7%</div>
+        </div>
+        <div class="glass-panel" style="padding: 20px;">
+          <div style="color: var(--text-dim); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Escalation Exception Rate</div>
+          <div style="font-size: 2rem; font-weight: 800; color: #a78bfa; font-family: var(--font-mono);">0.6%</div>
+        </div>
+      </div>
+
+      <!-- Tasks Filter & Table -->
+      <div class="tasks-control-bar">
+        <div class="filter-group">
+          <button class="filter-btn active" onclick="filterClientTasks('all', this)">All Tasks</button>
+          <button class="filter-btn" onclick="filterClientTasks('in_worker_review', this)">In QA Review</button>
+          <button class="filter-btn" onclick="filterClientTasks('verified', this)">Verified & Passed</button>
+          <button class="filter-btn" onclick="filterClientTasks('ai_processing', this)">AI Processing</button>
+          <button class="filter-btn" onclick="filterClientTasks('escalated', this)">Escalations</button>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">
+          Client Account: <strong style="color: #fff;" id="client-account-name">Acuity Health SaaS</strong>
+        </div>
+      </div>
+
+      <div id="client-tasks-container">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 3: WORKER PORTAL (OPERATOR WORKBENCH)                                -->
+    <!-- ========================================================================= -->
+    <section id="panel-worker" class="tab-panel">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin: 40px 0 25px;">
+        <div>
+          <h2>⚡ AI Operator Workbench & Task Queue</h2>
+          <p style="color: var(--text-muted);">Claim pending client tasks, review Gemini drafts against SOP acceptance criteria, and submit certified deliverables.</p>
+        </div>
+        <button class="btn btn-purple" onclick="openModal('modal-onboard-test')">✍ Take Onboarding Exam</button>
+      </div>
+
+      <!-- Worker Profile / Performance Card -->
+      <div class="glass-panel glass-panel-glow" style="padding: 24px; margin-bottom: 30px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; align-items: center;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+            <span style="font-size: 2rem;">⚡</span>
+            <div>
+              <h3 id="worker-profile-name">Bilal Tariq (Operator #PK-219)</h3>
+              <span class="status-pill pill-purple" id="worker-profile-badge">Senior Tier-3 Operator (Pakistan)</span>
+            </div>
+          </div>
+          <p style="font-size: 0.88rem; color: var(--text-muted);">Specialization: Finance & Data Extraction QA | HIPAA Certified | Top 2% Tier</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: center;">
+          <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px;">
+            <div style="font-size: 0.75rem; color: var(--text-dim);">ACCURACY SCORE</div>
+            <div style="font-size: 1.4rem; font-weight: 800; color: #34d399;" id="worker-stat-accuracy">99.6%</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px;">
+            <div style="font-size: 0.75rem; color: var(--text-dim);">TASKS COMPLETED</div>
+            <div style="font-size: 1.4rem; font-weight: 800; color: #fff;" id="worker-stat-completed">3,410</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px;">
+            <div style="font-size: 0.75rem; color: var(--text-dim);">REWORK RATE</div>
+            <div style="font-size: 1.4rem; font-weight: 800; color: #38bdf8;">0.4%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Operator Task Claiming List -->
+      <h3 style="margin-bottom: 16px;">Available Tasks in Verification Queue</h3>
+      <div id="worker-tasks-container">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 4: CUSTOMER DISCOVERY & ROI CALCULATOR                                -->
+    <!-- ========================================================================= -->
+    <section id="panel-discovery" class="tab-panel">
+      <div style="margin: 40px 0 25px;">
+        <h2>📊 Customer Discovery & Workflow Pain Score Calculator</h2>
+        <p style="color: var(--text-muted);">Based on the TrainedForce Discovery Playbook. Assess workflow friction (1–40 Pain Score) and model economic savings.</p>
+      </div>
+
+      <div class="calculator-grid">
+        <!-- Form -->
+        <div class="glass-panel" style="padding: 30px;">
+          <h3 style="margin-bottom: 20px;">1. Workflow Parameters</h3>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label class="form-label">Company Name</label>
+              <input type="text" id="calc-company" class="form-input" value="Apex Financial Services">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Industry</label>
+              <select id="calc-industry" class="form-select">
+                <option>Fintech & Accounting</option>
+                <option>Healthcare & HIPAA</option>
+                <option>E-Commerce & Retail</option>
+                <option>SaaS & Customer Support</option>
+                <option>Supply Chain & Logistics</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Repetitive Workflow Name</label>
+            <input type="text" id="calc-workflow" class="form-input" value="Vendor Invoice PO Reconciliation & Exception Flagging">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label class="form-label">Current Monthly Cost ($ USD)</label>
+              <input type="number" id="calc-cost" class="form-input" value="18000" oninput="calculatePainScore()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hours Spent Per Week</label>
+              <input type="number" id="calc-hours" class="form-input" value="45" oninput="calculatePainScore()">
+            </div>
+          </div>
+
+          <h3 style="margin: 25px 0 15px;">2. Playbook Scoring Criteria (1 = Weak, 5 = High Pain)</h3>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label class="form-label">Frequency (How often?): <span id="val-freq" class="mono" style="color: var(--primary);">4</span>/5</label>
+              <input type="range" min="1" max="5" value="4" class="form-input" id="range-freq" oninput="updateRange('freq'); calculatePainScore();">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pain & Friction: <span id="val-pain" class="mono" style="color: var(--primary);">5</span>/5</label>
+              <input type="range" min="1" max="5" value="5" class="form-input" id="range-pain" oninput="updateRange('pain'); calculatePainScore();">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Economic Impact ($$$): <span id="val-econ" class="mono" style="color: var(--primary);">4</span>/5</label>
+              <input type="range" min="1" max="5" value="4" class="form-input" id="range-econ" oninput="updateRange('econ'); calculatePainScore();">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Measurability of Output: <span id="val-meas" class="mono" style="color: var(--primary);">5</span>/5</label>
+              <input type="range" min="1" max="5" value="5" class="form-input" id="range-meas" oninput="updateRange('meas'); calculatePainScore();">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Remote Deliverability: <span id="val-remote" class="mono" style="color: var(--primary);">5</span>/5</label>
+              <input type="range" min="1" max="5" value="5" class="form-input" id="range-remote" oninput="updateRange('remote'); calculatePainScore();">
+            </div>
+            <div class="form-group">
+              <label class="form-label">AI Suitability: <span id="val-ai" class="mono" style="color: var(--primary);">4</span>/5</label>
+              <input type="range" min="1" max="5" value="4" class="form-input" id="range-ai" oninput="updateRange('ai'); calculatePainScore();">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Buyer Access & Authority: <span id="val-buyer" class="mono" style="color: var(--primary);">4</span>/5</label>
+              <input type="range" min="1" max="5" value="4" class="form-input" id="range-buyer" oninput="updateRange('buyer'); calculatePainScore();">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Urgency (Timeline to solve): <span id="val-urg" class="mono" style="color: var(--primary);">5</span>/5</label>
+              <input type="range" min="1" max="5" value="5" class="form-input" id="range-urg" oninput="updateRange('urg'); calculatePainScore();">
+            </div>
+          </div>
+
+          <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="submitDiscoveryRecord()">💾 Save & Export Discovery Record</button>
+        </div>
+
+        <!-- Score & Economics Result Box -->
+        <div>
+          <div class="glass-panel score-display-card">
+            <div style="font-size: 0.85rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Composite Pain Score</div>
+            <div class="score-big-number" id="calc-score-display" style="color: #34d399;">36 <span style="font-size: 1.5rem; color: var(--text-dim);">/ 40</span></div>
+            <div id="calc-recommendation-badge" class="status-pill pill-green" style="font-size: 0.9rem; padding: 6px 14px;">
+              ⭐ High Priority (32–40): Prime Pilot Candidate
+            </div>
+          </div>
+
+          <div class="glass-panel" style="padding: 24px;">
+            <h4 style="margin-bottom: 16px;">Estimated Economic Impact</h4>
+            
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+              <span style="color: var(--text-muted);">Current In-House Monthly:</span>
+              <strong class="mono" id="disp-current-cost">$18,000 / mo</strong>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+              <span style="color: var(--text-muted);">TrainedForce Verified Ops:</span>
+              <strong class="mono" style="color: var(--primary);" id="disp-tf-cost">$5,760 / mo</strong>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+              <span style="color: var(--text-muted);">Estimated Monthly Savings:</span>
+              <strong class="mono" style="color: var(--accent-emerald); font-size: 1.1rem;" id="disp-savings">$12,240 / mo (68%)</strong>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+              <span style="color: var(--text-muted);">Annual Savings:</span>
+              <strong class="mono" style="color: var(--accent-emerald); font-size: 1.2rem;" id="disp-annual-savings">$146,880 / year</strong>
+            </div>
+
+            <div style="margin-top: 20px; background: rgba(0, 242, 254, 0.08); border-radius: 8px; padding: 14px; border: 1px solid rgba(0, 242, 254, 0.2);">
+              <div style="font-weight: 700; color: var(--primary); font-size: 0.9rem;">⚡ Pilot Readiness SLA:</div>
+              <p style="font-size: 0.84rem; color: #cbd5e1; margin-top: 4px;">
+                Initial manual pilot launch within 5 business days with 5–10 dedicated operators, SOP blueprinting, and weekly Friday Scorecard reporting.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Saved Records Table -->
+      <div class="section" style="padding-top: 40px;">
+        <h3 style="margin-bottom: 16px;">Discovered Opportunity Log</h3>
+        <div class="glass-panel" style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
+                <th style="padding: 14px 16px;">Company</th>
+                <th style="padding: 14px 16px;">Industry</th>
+                <th style="padding: 14px 16px;">Workflow</th>
+                <th style="padding: 14px 16px;">Pain Score</th>
+                <th style="padding: 14px 16px;">Current Cost</th>
+                <th style="padding: 14px 16px;">Status</th>
+              </tr>
+            </thead>
+            <tbody id="discovery-table-body">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 5: OPERATIONS CMS (ADMIN COMMAND CENTER)                              -->
+    <!-- ========================================================================= -->
+    <section id="panel-admin" class="tab-panel">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin: 40px 0 25px;">
+        <div>
+          <h2>⚙️ Operations CMS & Command Center</h2>
+          <p style="color: var(--text-muted);">Manage Standard Operating Procedures (SOPs), inspect real-time operator queues, and audit system integrity.</p>
+        </div>
+        <button class="btn btn-outline" onclick="openModal('modal-new-sop')">+ Create SOP Blueprint</button>
+      </div>
+
+      <!-- CMS SOPs Grid -->
+      <h3 style="margin-bottom: 16px;">Active SOP Blueprints & Acceptance Criteria</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; margin-bottom: 40px;" id="sops-grid">
+        <!-- Rendered via JS -->
+      </div>
+
+      <!-- Admin Full Task Pipeline Overview -->
+      <h3 style="margin-bottom: 16px;">System-wide Task Audit Trail</h3>
+      <div id="admin-tasks-container">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- MODALS                                                                    -->
+  <!-- ========================================================================= -->
+
+  <!-- Modal: Switch Role / User -->
+  <div id="modal-auth" class="modal-overlay">
+    <div class="modal-window">
+      <button class="modal-close-btn" onclick="closeModal('modal-auth')">✕</button>
+      <h3 style="margin-bottom: 8px;">Select User Persona</h3>
+      <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">Switch between simulated perspectives or register a new client/operator account.</p>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;" id="user-persona-list">
+        <!-- Populated via JS -->
+      </div>
+
+      <h4 style="margin: 20px 0 12px; border-top: 1px solid var(--border-color); padding-top: 16px;">Register New User</h4>
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" id="reg-name" class="form-input" placeholder="e.g. Kamran Ahmed">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" id="reg-email" class="form-input" placeholder="e.g. kamran@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Role</label>
+        <select id="reg-role" class="form-select">
+          <option value="worker">⚡ AI Operator (Pakistan / Global)</option>
+          <option value="client">💼 Enterprise Client (SME / Founder)</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="width: 100%;" onclick="submitRegistration()">Register & Switch Persona</button>
+    </div>
+  </div>
+
+  <!-- Modal: Launch New Task Batch -->
+  <div id="modal-new-task" class="modal-overlay">
+    <div class="modal-window">
+      <button class="modal-close-btn" onclick="closeModal('modal-new-task')">✕</button>
+      <h3 style="margin-bottom: 8px;">Submit New Workflow Task</h3>
+      <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">Task will be instantly ingested into the Gemini AI pipeline and queued for human operator verification.</p>
+
+      <div class="form-group">
+        <label class="form-label">Workflow Service</label>
+        <select id="new-task-service" class="form-select">
+          <option value="srv_finance">Invoice & Receipt Reconciliation Audit</option>
+          <option value="srv_support">AI Customer Support Triaging & Escalation QA</option>
+          <option value="srv_ecommerce">E-Commerce Catalog Enrichment & Taxonomy QA</option>
+          <option value="srv_revops">RevOps B2B Lead Enrichment & Signal Verification</option>
+          <option value="srv_aiqa">LLM RLHF & Ground-Truth Verification</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Task Title / Reference</label>
+        <input type="text" id="new-task-title" class="form-input" placeholder="e.g. Batch Q3 Vendor Invoice Audit #INV-8812">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Priority</label>
+        <select id="new-task-priority" class="form-select">
+          <option value="Normal">Normal (SLA &lt; 2 Hours)</option>
+          <option value="High">High (SLA &lt; 30 Mins)</option>
+          <option value="Urgent">Urgent (SLA &lt; 5 Mins)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Input Data Payload / Context</label>
+        <textarea id="new-task-input" class="form-textarea" rows="4" placeholder="Paste JSON data, invoice numbers, ticket text, or exception instructions..."></textarea>
+      </div>
+
+      <button class="btn btn-primary" style="width: 100%;" onclick="submitNewTask()">🚀 Ingest & Dispatch to Pipeline</button>
+    </div>
+  </div>
+
+  <!-- Modal: Worker Task Verification Workbench -->
+  <div id="modal-verify-task" class="modal-overlay">
+    <div class="modal-window" style="max-width: 750px;">
+      <button class="modal-close-btn" onclick="closeModal('modal-verify-task')">✕</button>
+      <h3 id="modal-task-title">Task Verification</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;" id="modal-task-meta">Task ID: TSK-8921</p>
+
+      <div style="margin-bottom: 16px;">
+        <label class="form-label">Client Input Data Payload:</label>
+        <div class="task-summary-box" id="modal-task-input">--</div>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label class="form-label" style="color: var(--primary);">Gemini AI Pipeline Generated Draft:</label>
+        <div class="task-ai-box" id="modal-task-aidraft">--</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Operator Verification Notes & QA Audit Sign-off:</label>
+        <textarea id="modal-operator-notes" class="form-textarea" rows="3" placeholder="Document verified PO terms, corrections made to AI draft, or policy adherence notes..."></textarea>
+      </div>
+
+      <div style="display: flex; gap: 12px;">
+        <button class="btn btn-primary" style="flex: 1;" onclick="submitTaskAction('verify')">✔ Pass Quality Check & Sign-off</button>
+        <button class="btn btn-outline" style="border-color: var(--accent-rose); color: var(--accent-rose);" onclick="submitTaskAction('escalate')">⚠ Escalate Exception</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Operator Onboarding Qualification Exam -->
+  <div id="modal-onboard-test" class="modal-overlay">
+    <div class="modal-window" style="max-width: 700px;">
+      <button class="modal-close-btn" onclick="closeModal('modal-onboard-test')">✕</button>
+      <h3>⚡ AI Operator Certification Assessment</h3>
+      <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">Score >= 80% to earn your Certified AI Operator Badge and unlock live client task queues.</p>
+
+      <div style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 25px;">
+        <div style="background: rgba(0,0,0,0.25); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
+          <div style="font-weight: 700; margin-bottom: 8px;">Q1: An invoice shows a $30 freight variance against the purchase order. According to SOP v3.2, what should the operator do?</div>
+          <label style="display: block; margin-bottom: 6px; cursor: pointer;"><input type="radio" name="q1" value="a"> Auto-approve without checking FOB terms.</label>
+          <label style="display: block; margin-bottom: 6px; cursor: pointer;"><input type="radio" name="q1" value="b"> Check PO FOB terms, flag variance for client review if unapproved.</label>
+          <label style="display: block; cursor: pointer;"><input type="radio" name="q1" value="c"> Reject entire vendor relationship.</label>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.25); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
+          <div style="font-weight: 700; margin-bottom: 8px;">Q2: An enterprise account ($120k ARR) requests an exception 5 days past refund policy. How should you handle?</div>
+          <label style="display: block; margin-bottom: 6px; cursor: pointer;"><input type="radio" name="q2" value="a"> Quote the rigid 30-day rule verbatim and deny immediately.</label>
+          <label style="display: block; margin-bottom: 6px; cursor: pointer;"><input type="radio" name="q2" value="b"> Ignore the ticket for 48 hours.</label>
+          <label style="display: block; cursor: pointer;"><input type="radio" name="q2" value="c"> Offer service extension credits with empathetic tone and notify Account Executive.</label>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.25); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
+          <div style="font-weight: 700; margin-bottom: 8px;">Q3: What is the core rule regarding AI hallucinations in data extraction deliverables?</div>
+          <label style="display: block; margin-bottom: 6px; cursor: pointer;"><input type="radio" name="q3" value="a"> Every factual claim must cite a verified source URL or provided context document.</label>
+          <label style="display: block; margin-bottom: 6px; cursor: pointer;"><input type="radio" name="q3" value="b"> AI outputs never have hallucinations and require no verification.</label>
+          <label style="display: block; cursor: pointer;"><input type="radio" name="q3" value="c"> Only check first 3 lines of output.</label>
+        </div>
+      </div>
+
+      <button class="btn btn-purple" style="width: 100%;" onclick="submitOnboardingTest()">Submit Exam for Instant Evaluation</button>
+    </div>
+  </div>
+
+  <!-- Modal: Create SOP Blueprint -->
+  <div id="modal-new-sop" class="modal-overlay">
+    <div class="modal-window">
+      <button class="modal-close-btn" onclick="closeModal('modal-new-sop')">✕</button>
+      <h3 style="margin-bottom: 8px;">Create New SOP Blueprint</h3>
+      <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">Define rules for operators and AI agents.</p>
+
+      <div class="form-group">
+        <label class="form-label">SOP Title</label>
+        <input type="text" id="sop-title" class="form-input" placeholder="e.g. Healthcare Claims Triage Protocol">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <input type="text" id="sop-category" class="form-input" placeholder="e.g. Healthcare & HIPAA">
+      </div>
+      <div class="form-group">
+        <label class="form-label">SOP Rules (One rule per line)</label>
+        <textarea id="sop-rules" class="form-textarea" rows="4" placeholder="Rule 1: Always verify patient ID...&#10;Rule 2: Flag missing ICD-10 codes..."></textarea>
+      </div>
+
+      <button class="btn btn-primary" style="width: 100%;" onclick="submitNewSop()">Save SOP Blueprint</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="brand-logo" style="margin-bottom: 12px;">
+            <div class="logo-bolt">⚡</div>
+            <span>TrainedForce</span>
+          </div>
+          <p style="color: var(--text-dim); max-width: 320px; font-size: 0.85rem;">
+            Enterprise AI Workforce Verification & Deployment Platform. Empowering foreign SMEs with elite AI-assisted Pakistani and global knowledge operators.
+          </p>
+          <div style="margin-top: 14px; font-family: var(--font-mono); font-size: 0.78rem; color: var(--primary);">
+            Domain: trainedforce.com | 100% SLA Guarantee
+          </div>
+        </div>
+
+        <div>
+          <h4 style="color: #fff; font-size: 0.95rem; margin-bottom: 14px;">Platform</h4>
+          <ul class="footer-links">
+            <li><a href="#" onclick="switchTab('overview')">Overview</a></li>
+            <li><a href="#" onclick="switchTab('client')">Client Studio</a></li>
+            <li><a href="#" onclick="switchTab('worker')">Operator Workbench</a></li>
+            <li><a href="#" onclick="switchTab('discovery')">ROI Calculator</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 style="color: #fff; font-size: 0.95rem; margin-bottom: 14px;">Workflows</h4>
+          <ul class="footer-links">
+            <li><a href="#">Finance & Invoices</a></li>
+            <li><a href="#">Support Triaging</a></li>
+            <li><a href="#">E-Commerce QA</a></li>
+            <li><a href="#">LLM RLHF & Data</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 style="color: #fff; font-size: 0.95rem; margin-bottom: 14px;">Compliance</h4>
+          <ul class="footer-links">
+            <li><a href="#">SOC2 Type II</a></li>
+            <li><a href="#">HIPAA Compliance</a></li>
+            <li><a href="#">GDPR Verification</a></li>
+            <li><a href="#">Immutable Logs</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 20px; font-size: 0.8rem;">
+        <div>© 2026 TrainedForce. All rights reserved. trainedforce.com</div>
+        <div style="color: var(--text-dim);">Designed with Gemini Image Generation & Advanced AI Workforce Architecture.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/app.js"></script>
+</body>
+</html>
