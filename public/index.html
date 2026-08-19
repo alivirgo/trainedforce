@@ -16,38 +16,64 @@
 </head>
 <body>
 
+  <!-- Live Telemetry Top Bar -->
+  <div class="telemetry-ticker">
+    <div class="container telemetry-flex">
+      <div class="telemetry-node">
+        <span class="pulse-circle"></span>
+        <span>Global Pipeline: <strong style="color: #34d399;">ALL SYSTEMS OPERATIONAL</strong></span>
+      </div>
+      <div class="telemetry-node">
+        <span>Verified Accuracy SLA:</span>
+        <strong style="color: #fff;" class="mono" id="tele-acc">99.4%</strong>
+      </div>
+      <div class="telemetry-node">
+        <span>Active QA Squads:</span>
+        <strong style="color: #38bdf8;" class="mono" id="tele-ops">284 Online</strong>
+      </div>
+      <div class="telemetry-node">
+        <span>Avg Turnaround:</span>
+        <strong style="color: #fff;" class="mono" id="tele-sla">&lt; 4.8 mins</strong>
+      </div>
+      <div class="telemetry-node">
+        <span>Total Verified Tasks:</span>
+        <strong style="color: #fcd34d;" class="mono" id="tele-tasks">142,850+</strong>
+      </div>
+    </div>
+  </div>
+
   <!-- Top Main Header -->
   <header class="fl-header">
     <div class="container fl-navbar">
       <div class="fl-nav-left">
         <!-- Logo -->
-        <div class="fl-logo-wrap" onclick="App.navigateTo('projects')">
-          <div class="fl-logo-icon">⚡</div>
-          <div class="fl-logo-text">TrainedForce<span class="fl-logo-tag">PRO</span></div>
+        <div class="fl-brand" onclick="App.navigateTo('projects')">
+          <div class="brand-icon">⚡</div>
+          <div class="brand-title">TrainedForce<span class="brand-badge">PRO</span></div>
         </div>
 
         <!-- Search Bar -->
-        <div class="fl-search-bar">
-          <span style="color: var(--text-light); margin-right: 8px;">🔍</span>
-          <input type="text" id="global-search" class="fl-search-input" placeholder="Search tasks, SOPs, AI squads..." oninput="App.handleSearch(this.value)">
+        <div class="nav-search">
+          <span style="color: var(--text-dim); margin-right: 8px;">🔍</span>
+          <input type="text" id="global-search" placeholder="Search tasks, SOPs, operators..." oninput="App.handleSearch(this.value)">
         </div>
 
         <!-- Main Navigation Links -->
-        <ul class="fl-nav-links">
-          <li><button class="fl-nav-link active" id="nav-projects" onclick="App.navigateTo('projects')">Browse Projects</button></li>
-          <li><button class="fl-nav-link" id="nav-freelancers" onclick="App.navigateTo('freelancers')">AI Operators</button></li>
-          <li><button class="fl-nav-link" id="nav-calculator" onclick="App.navigateTo('calculator')">ROI & Discovery</button></li>
-          <li><button class="fl-nav-link" id="nav-cms" onclick="App.navigateTo('cms')">Internal CMS & SOPs</button></li>
+        <ul class="nav-tabs">
+          <li><button class="nav-tab-btn active" id="nav-projects" onclick="App.navigateTo('projects')">Browse Projects</button></li>
+          <li><button class="nav-tab-btn" id="nav-freelancers" onclick="App.navigateTo('freelancers')">AI Operators</button></li>
+          <li><button class="nav-tab-btn" id="nav-calculator" onclick="App.navigateTo('calculator')">ROI & Discovery</button></li>
+          <li><button class="nav-tab-btn" id="nav-cms" onclick="App.navigateTo('cms')">Internal CMS & SOPs</button></li>
         </ul>
       </div>
 
       <!-- Right Action & User Profile -->
       <div class="fl-nav-right">
-        <button class="fl-user-btn" onclick="App.openModal('modal-auth')" title="Switch Persona">
-          <div class="fl-user-avatar" id="nav-user-avatar">💼</div>
-          <div class="fl-user-details">
-            <span class="fl-user-name" id="nav-user-name">Sarah Jenkins</span>
-            <span class="fl-user-role" id="nav-user-role">Enterprise Client</span>
+        <button class="user-persona-btn" onclick="App.openModal('modal-auth')" title="Switch Persona">
+          <div class="user-avatar-circle" id="nav-user-avatar">💼</div>
+          <div style="text-align: left; line-height: 1.2;">
+            <div style="font-size: 0.85rem; font-weight: 700;" id="nav-user-name">Sarah Jenkins</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted);" id="nav-user-role">Enterprise Client</div>
           </div>
           <span style="font-size: 0.7rem; color: var(--text-muted); margin-left: 4px;">▼</span>
         </button>
@@ -60,141 +86,131 @@
 
     <!-- Category Subnav Strip -->
     <div class="fl-subnav">
-      <div class="container fl-subnav-container">
-        <div class="fl-subnav-item active" onclick="App.filterCategory('all', this)">⚡ All Workflows</div>
-        <div class="fl-subnav-item" onclick="App.filterCategory('srv_finance', this)">📊 Finance & Invoice PO Audit</div>
-        <div class="fl-subnav-item" onclick="App.filterCategory('srv_support', this)">🎧 Customer Support Triaging</div>
-        <div class="fl-subnav-item" onclick="App.filterCategory('srv_ecommerce', this)">🛍️ E-Commerce Catalog QA</div>
-        <div class="fl-subnav-item" onclick="App.filterCategory('srv_revops', this)">🎯 RevOps & B2B Lead Enrichment</div>
-        <div class="fl-subnav-item" onclick="App.filterCategory('srv_aiqa', this)">🧠 LLM RLHF & Ground-Truth</div>
+      <div class="container subnav-flex">
+        <div class="subnav-link active" onclick="App.filterCategory('all', this)">⚡ All Workflows</div>
+        <div class="subnav-link" onclick="App.filterCategory('srv_finance', this)">📊 Finance & PO Reconciliation</div>
+        <div class="subnav-link" onclick="App.filterCategory('srv_support', this)">🎧 Customer Support Triaging</div>
+        <div class="subnav-link" onclick="App.filterCategory('srv_ecommerce', this)">🛍️ E-Commerce Catalog QA</div>
+        <div class="subnav-link" onclick="App.filterCategory('srv_revops', this)">🎯 RevOps & B2B Leads</div>
+        <div class="subnav-link" onclick="App.filterCategory('srv_aiqa', this)">🧠 LLM RLHF Ground-Truth</div>
       </div>
     </div>
   </header>
 
   <!-- ========================================================================= -->
-  <!-- HERO BANNER (FREELANCER ENTERPRISE STYLE)                                 -->
+  <!-- HERO BANNER (WITH INTERACTIVE VISUAL GALLERY)                             -->
   <!-- ========================================================================= -->
   <section class="fl-hero-banner" id="hero-banner">
-    <div class="container fl-hero-grid">
+    <div class="container hero-layout">
       <div>
-        <h1 class="fl-hero-title">
-          Hire elite <span>AI-assisted teams</span> for repetitive knowledge work.
+        <h1 class="hero-headline">
+          Hire verified <span>AI-assisted teams</span> for repetitive knowledge work.
         </h1>
-        <p class="fl-hero-subtitle">
-          Pakistan's top-tier operators paired with state-of-the-art AI pipelines. 99.4% guaranteed accuracy, HIPAA/SOC2 compliance, and transparent delivery SLAs.
+        <p class="hero-subhead">
+          We combine Pakistan's elite knowledge operators with Gemini AI workflows to solve high-friction finance, support, and catalog operations with 99.4% guaranteed accuracy.
         </p>
-        <div class="fl-hero-actions">
+        <div class="hero-actions-row">
           <button class="btn btn-primary btn-lg" onclick="App.openPostProjectModal()">Post a Project Now</button>
           <button class="btn btn-secondary btn-lg" onclick="App.openModal('modal-onboard-test')">Apply as AI Operator</button>
           <button class="btn btn-outline btn-lg" style="color: #fff; border-color: rgba(255,255,255,0.3); background: transparent;" onclick="App.navigateTo('calculator')">Calculate Workflow ROI</button>
         </div>
 
-        <div class="fl-trust-stats">
-          <div class="fl-trust-stat">
+        <div class="hero-metrics-strip">
+          <div class="hero-metric-item">
             <strong>142,850+</strong>
             <span>Verified Tasks</span>
           </div>
-          <div class="fl-trust-stat">
+          <div class="hero-metric-item">
             <strong>99.4%</strong>
             <span>QA Pass Rate</span>
           </div>
-          <div class="fl-trust-stat">
+          <div class="hero-metric-item">
             <strong>&lt; 4.8 min</strong>
-            <span>Average Turnaround</span>
+            <span>Avg Turnaround</span>
           </div>
-          <div class="fl-trust-stat">
+          <div class="hero-metric-item">
             <strong>284</strong>
-            <span>Verified Operators</span>
+            <span>Active Operators</span>
           </div>
         </div>
       </div>
 
-      <div class="fl-hero-card">
-        <img src="/assets/hero-dashboard.jpg" alt="TrainedForce Command Center" class="fl-hero-img">
+      <!-- Interactive Visual Gallery -->
+      <div class="visual-gallery-card">
+        <div class="gallery-tabs">
+          <button class="gallery-tab-btn active" onclick="App.switchGalleryImage('dashboard', this)">Command Center</button>
+          <button class="gallery-tab-btn" onclick="App.switchGalleryImage('pipeline', this)">Workflow Engine</button>
+          <button class="gallery-tab-btn" onclick="App.switchGalleryImage('operator', this)">Talent Hub</button>
+        </div>
+        <img src="/assets/hero-dashboard.jpg" alt="TrainedForce Command Center" id="gallery-img-display" class="gallery-img-view">
       </div>
     </div>
   </section>
 
   <!-- ========================================================================= -->
-  <!-- MAIN CONTAINER WITH TABS                                                  -->
+  <!-- MAIN CONTAINER WITH VIEWS                                                 -->
   <!-- ========================================================================= -->
   <main class="container">
 
     <!-- VIEW 1: PROJECTS MARKETPLACE & FEED -->
     <div id="view-projects" class="tab-view">
-      <div class="fl-marketplace-layout">
+      <div class="marketplace-grid">
         
         <!-- Left Filter Sidebar -->
-        <aside class="fl-filter-sidebar">
+        <aside>
           <!-- Project Type -->
-          <div class="filter-box">
-            <div class="filter-heading">Project Type</div>
-            <div class="filter-group">
-              <label class="filter-checkbox-label">
+          <div class="sidebar-filter-box">
+            <div class="filter-title">Project Type</div>
+            <div class="filter-options-list">
+              <label class="filter-checkbox">
                 <input type="checkbox" checked onchange="App.applyFilters()"> Fixed Price Batch
-                <span class="filter-count">(18)</span>
+                <span style="margin-left: auto; color: var(--text-dim); font-size: 0.78rem;">(18)</span>
               </label>
-              <label class="filter-checkbox-label">
+              <label class="filter-checkbox">
                 <input type="checkbox" checked onchange="App.applyFilters()"> Per-Resolution Task
-                <span class="filter-count">(42)</span>
+                <span style="margin-left: auto; color: var(--text-dim); font-size: 0.78rem;">(42)</span>
               </label>
-              <label class="filter-checkbox-label">
-                <input type="checkbox" checked onchange="App.applyFilters()"> Dedicated Monthly Squad
-                <span class="filter-count">(7)</span>
+              <label class="filter-checkbox">
+                <input type="checkbox" checked onchange="App.applyFilters()"> Dedicated Squad
+                <span style="margin-left: auto; color: var(--text-dim); font-size: 0.78rem;">(7)</span>
               </label>
             </div>
           </div>
 
           <!-- QA Status Filter -->
-          <div class="filter-box">
-            <div class="filter-heading">Pipeline Status</div>
-            <div class="filter-group">
-              <label class="filter-checkbox-label">
+          <div class="sidebar-filter-box">
+            <div class="filter-title">Pipeline Status</div>
+            <div class="filter-options-list">
+              <label class="filter-checkbox">
                 <input type="radio" name="status-filter" value="all" checked onchange="App.filterStatus('all')"> All Statuses
               </label>
-              <label class="filter-checkbox-label">
+              <label class="filter-checkbox">
                 <input type="radio" name="status-filter" value="in_worker_review" onchange="App.filterStatus('in_worker_review')"> In QA Review
               </label>
-              <label class="filter-checkbox-label">
+              <label class="filter-checkbox">
                 <input type="radio" name="status-filter" value="verified" onchange="App.filterStatus('verified')"> Verified & Delivered
               </label>
-              <label class="filter-checkbox-label">
+              <label class="filter-checkbox">
                 <input type="radio" name="status-filter" value="ai_processing" onchange="App.filterStatus('ai_processing')"> AI Auto-Drafting
               </label>
             </div>
           </div>
 
-          <!-- Skills & Certifications -->
-          <div class="filter-box">
-            <div class="filter-heading">Verified Skills</div>
-            <div class="filter-group">
-              <label class="filter-checkbox-label">
-                <input type="checkbox" checked> Finance & PO Matching
+          <!-- Verified Operator Locations -->
+          <div class="sidebar-filter-box">
+            <div class="filter-title">Talent Hub Locations</div>
+            <div class="filter-options-list">
+              <label class="filter-checkbox">
+                <input type="checkbox" checked> 🇵🇰 Lahore, Pakistan
               </label>
-              <label class="filter-checkbox-label">
-                <input type="checkbox" checked> HIPAA & Healthcare QA
+              <label class="filter-checkbox">
+                <input type="checkbox" checked> 🇵🇰 Karachi, Pakistan
               </label>
-              <label class="filter-checkbox-label">
-                <input type="checkbox" checked> Zendesk Tier-2 Triage
+              <label class="filter-checkbox">
+                <input type="checkbox" checked> 🇵🇰 Islamabad, Pakistan
               </label>
-              <label class="filter-checkbox-label">
-                <input type="checkbox" checked> Gemini 2.5 Prompt QA
-              </label>
-              <label class="filter-checkbox-label">
-                <input type="checkbox" checked> E-Com Merchant Taxonomy
-              </label>
-            </div>
-          </div>
-
-          <!-- Location -->
-          <div class="filter-box">
-            <div class="filter-heading">Operator Location</div>
-            <div class="filter-group">
-              <label class="filter-checkbox-label">
-                <input type="checkbox" checked> 🇵🇰 Pakistan (Lahore/Karachi/ISB)
-              </label>
-              <label class="filter-checkbox-label">
-                <input type="checkbox" checked> 🌐 Global Enterprise Ops
+              <label class="filter-checkbox">
+                <input type="checkbox" checked> 🌐 Global Remote Squads
               </label>
             </div>
           </div>
@@ -202,13 +218,13 @@
 
         <!-- Main Project Feed -->
         <section>
-          <div class="fl-feed-header">
-            <div class="fl-feed-title">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div style="font-size: 1.25rem; font-weight: 700;">
               Active Workflow Projects (<span id="project-count-badge">4</span>)
             </div>
-            <div class="fl-sort-wrap">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-muted);">
               <span>Sort by:</span>
-              <select class="fl-sort-select" onchange="App.sortProjects(this.value)">
+              <select class="form-control" style="width: auto; padding: 4px 10px; font-size: 0.85rem;" onchange="App.sortProjects(this.value)">
                 <option value="newest">Latest First</option>
                 <option value="priority">Highest Priority</option>
                 <option value="accuracy">Highest Accuracy</option>
@@ -216,7 +232,7 @@
             </div>
           </div>
 
-          <!-- Project Cards Container -->
+          <!-- Project Cards Feed -->
           <div id="projects-feed-container">
             <!-- Populated dynamically -->
           </div>
@@ -235,7 +251,7 @@
         <button class="btn btn-secondary" onclick="App.openModal('modal-onboard-test')">Take Qualification Exam</button>
       </div>
 
-      <div class="operator-grid" id="operators-grid-container">
+      <div class="operators-grid" id="operators-grid-container">
         <!-- Rendered dynamically -->
       </div>
     </div>
@@ -323,7 +339,7 @@
           </div>
 
           <!-- Economics Card -->
-          <div style="background: var(--bg-surface-subtle); padding: 24px; border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+          <div style="background: var(--bg-surface-alt); padding: 24px; border-radius: var(--radius-md); border: 1px solid var(--border-light);">
             <div style="text-align: center; margin-bottom: 20px;">
               <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Composite Pain Score</span>
               <div style="font-size: 3.5rem; font-weight: 800; font-family: var(--font-mono); color: var(--fl-emerald);" id="display-score-num">36 / 40</div>
@@ -367,7 +383,7 @@
         <button class="btn btn-primary" onclick="App.openModal('modal-new-sop')">+ Create SOP Blueprint</button>
       </div>
 
-      <div class="operator-grid" id="sops-grid-container">
+      <div class="operators-grid" id="sops-grid-container">
         <!-- Rendered dynamically -->
       </div>
     </div>
@@ -378,38 +394,87 @@
   <!-- MODALS                                                                    -->
   <!-- ========================================================================= -->
 
-  <!-- Modal: Switch Persona / Login -->
-  <div class="modal-backdrop" id="modal-auth">
+  <!-- Modal: Place Bid / Claim Task (Freelancer Style) -->
+  <div class="modal-backdrop" id="modal-bid-task">
     <div class="modal-dialog">
-      <button class="modal-close" onclick="App.closeModal('modal-auth')">✕</button>
-      <h3 style="margin-bottom: 8px;">Select User Account</h3>
-      <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 18px;">Switch between simulated client, operator, and administrator accounts.</p>
+      <button class="modal-close" onclick="App.closeModal('modal-bid-task')">✕</button>
+      <h3 id="bid-project-title" style="margin-bottom: 4px;">Place Bid / Proposal on Task</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 18px;" id="bid-project-subtitle">Task ID: --</p>
 
-      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px;" id="auth-users-list">
-        <!-- Populated via JS -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+        <div>
+          <label class="form-label">Your Bid Amount ($ USD / Task)</label>
+          <input type="number" id="bid-amount-input" class="form-control" value="0.85">
+        </div>
+        <div>
+          <label class="form-label">Delivery SLA Commitment</label>
+          <select id="bid-sla-input" class="form-control">
+            <option value="5 mins">&lt; 5 Minutes (Urgent)</option>
+            <option value="15 mins">&lt; 15 Minutes</option>
+            <option value="1 hour">&lt; 1 Hour</option>
+          </select>
+        </div>
       </div>
 
-      <h4 style="margin: 18px 0 10px; border-top: 1px solid var(--border-light); padding-top: 14px;">Register New Account</h4>
       <div class="form-group">
-        <label class="form-label">Full Name</label>
-        <input type="text" id="reg-name" class="form-control" placeholder="e.g. Asad Mehmood">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <label class="form-label" style="margin-bottom: 0;">Proposal Cover Letter & SOP Compliance</label>
+          <button type="button" class="btn btn-outline btn-sm" onclick="App.autoGenerateProposal()">✨ AI Draft Proposal</button>
+        </div>
+        <textarea id="bid-proposal-text" class="form-control" rows="4" placeholder="Describe your experience with this workflow and adherence to client SOP rules..."></textarea>
       </div>
-      <div class="form-group">
-        <label class="form-label">Email Address</label>
-        <input type="email" id="reg-email" class="form-control" placeholder="e.g. asad@trainedforce.com">
+
+      <div style="background: var(--fl-emerald-light); padding: 12px; border-radius: var(--radius-sm); border: 1px solid #bbf7d0; margin-bottom: 18px; font-size: 0.84rem; color: #15803d;">
+        ✔ <strong>Guaranteed Quality:</strong> You agree to meet the &gt;= 99.0% verification score target and pass the review checklist.
       </div>
-      <div class="form-group">
-        <label class="form-label">Role</label>
-        <select id="reg-role" class="form-control">
-          <option value="worker">⚡ AI Operator (Pakistan / Global)</option>
-          <option value="client">💼 Enterprise Client</option>
-        </select>
-      </div>
-      <button class="btn btn-primary" style="width: 100%;" onclick="App.registerUser()">Register & Switch Persona</button>
+
+      <button class="btn btn-primary" style="width: 100%;" onclick="App.submitBid()">Submit Proposal & Claim Task</button>
     </div>
   </div>
 
-  <!-- Modal: Post a Project -->
+  <!-- Modal: Interactive Diff QA Workbench -->
+  <div class="modal-backdrop" id="modal-qa-task">
+    <div class="modal-dialog" style="max-width: 820px;">
+      <button class="modal-close" onclick="App.closeModal('modal-qa-task')">✕</button>
+      <h3 id="qa-task-title">Task Verification Workbench</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;" id="qa-task-meta">Task ID: --</p>
+
+      <div class="workbench-diff-grid">
+        <div class="workbench-column">
+          <div class="workbench-col-title">
+            <span>📄</span> Raw Client Input
+          </div>
+          <div style="font-size: 0.85rem; color: var(--text-secondary);" id="qa-task-input">--</div>
+        </div>
+
+        <div class="workbench-column" style="background: #f0f9ff; border-color: #bae6fd;">
+          <div class="workbench-col-title" style="color: #0369a1;">
+            <span>🤖</span> Gemini AI Inference
+          </div>
+          <div style="font-size: 0.85rem; color: #0369a1;" id="qa-task-aidraft">--</div>
+        </div>
+
+        <div class="workbench-column" style="background: var(--fl-emerald-light); border-color: #bbf7d0;">
+          <div class="workbench-col-title" style="color: #15803d;">
+            <span>⚡</span> Human QA Sign-off
+          </div>
+          <div style="font-size: 0.85rem; color: #15803d;">Ready for certified sign-off or exception escalation.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Operator Verification Notes & Audit Log:</label>
+        <textarea id="qa-operator-notes" class="form-control" rows="3" placeholder="Confirm SOP compliance or document adjustments made..."></textarea>
+      </div>
+
+      <div style="display: flex; gap: 12px;">
+        <button class="btn btn-primary" style="flex: 1;" onclick="App.submitTaskQA('verify')">✔ Pass Quality Check & Deliver</button>
+        <button class="btn btn-danger" onclick="App.submitTaskQA('escalate')">⚠ Escalate Exception</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Post a Project Wizard -->
   <div class="modal-backdrop" id="modal-post-project">
     <div class="modal-dialog">
       <button class="modal-close" onclick="App.closeModal('modal-post-project')">✕</button>
@@ -417,8 +482,8 @@
       <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">AI model will generate auto-drafts and assign to verified operators for QA.</p>
 
       <div class="form-group">
-        <label class="form-label">Select Workflow Category</label>
-        <select id="post-service-id" class="form-control">
+        <label class="form-label">Select Workflow Template</label>
+        <select id="post-service-id" class="form-control" onchange="App.handleTemplateSelect(this.value)">
           <option value="srv_finance">Finance: Invoice PO Reconciliation & Variance Audit</option>
           <option value="srv_support">Customer Support: Tier-1/2 Triaging & Policy QA</option>
           <option value="srv_ecommerce">E-Commerce: Catalog Taxonomy & Attribute QA</option>
@@ -456,32 +521,34 @@
     </div>
   </div>
 
-  <!-- Modal: Claim / QA Task Drawer -->
-  <div class="modal-backdrop" id="modal-qa-task">
-    <div class="modal-dialog" style="max-width: 720px;">
-      <button class="modal-close" onclick="App.closeModal('modal-qa-task')">✕</button>
-      <h3 id="qa-task-title">Task Verification Workbench</h3>
-      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;" id="qa-task-meta">Task ID: --</p>
+  <!-- Modal: Switch Persona / Login -->
+  <div class="modal-backdrop" id="modal-auth">
+    <div class="modal-dialog">
+      <button class="modal-close" onclick="App.closeModal('modal-auth')">✕</button>
+      <h3 style="margin-bottom: 8px;">Select User Account</h3>
+      <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 18px;">Switch between simulated client, operator, and administrator accounts.</p>
 
-      <div style="margin-bottom: 14px;">
-        <label class="form-label">Client Input Context:</label>
-        <div style="background: var(--bg-surface-subtle); padding: 12px; border-radius: var(--radius-sm); font-size: 0.88rem; border: 1px solid var(--border-light);" id="qa-task-input">--</div>
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px;" id="auth-users-list">
+        <!-- Populated via JS -->
       </div>
 
-      <div style="margin-bottom: 14px;">
-        <label class="form-label" style="color: var(--fl-blue);">Gemini AI Proposed Draft:</label>
-        <div style="background: #f0f9ff; border: 1px solid #bae6fd; padding: 12px; border-radius: var(--radius-sm); font-size: 0.88rem; color: #0369a1;" id="qa-task-aidraft">--</div>
-      </div>
-
+      <h4 style="margin: 18px 0 10px; border-top: 1px solid var(--border-light); padding-top: 14px;">Register New Account</h4>
       <div class="form-group">
-        <label class="form-label">Human Operator QA Notes & Sign-off:</label>
-        <textarea id="qa-operator-notes" class="form-control" rows="3" placeholder="Confirm SOP checklist compliance or document adjustments made..."></textarea>
+        <label class="form-label">Full Name</label>
+        <input type="text" id="reg-name" class="form-control" placeholder="e.g. Asad Mehmood">
       </div>
-
-      <div style="display: flex; gap: 12px;">
-        <button class="btn btn-primary" style="flex: 1;" onclick="App.submitTaskQA('verify')">✔ Pass Quality Check & Deliver</button>
-        <button class="btn btn-danger" onclick="App.submitTaskQA('escalate')">⚠ Escalate Exception</button>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" id="reg-email" class="form-control" placeholder="e.g. asad@trainedforce.com">
       </div>
+      <div class="form-group">
+        <label class="form-label">Role</label>
+        <select id="reg-role" class="form-control">
+          <option value="worker">⚡ AI Operator (Pakistan / Global)</option>
+          <option value="client">💼 Enterprise Client</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="width: 100%;" onclick="App.registerUser()">Register & Switch Persona</button>
     </div>
   </div>
 
@@ -493,21 +560,21 @@
       <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">Score >= 80% to earn your Certified AI Operator Badge and unlock live client task queues.</p>
 
       <div style="display: flex; flex-direction: column; gap: 18px; margin-bottom: 24px;">
-        <div style="background: var(--bg-surface-subtle); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-light);">
+        <div style="background: var(--bg-surface-alt); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-light);">
           <div style="font-weight: 700; margin-bottom: 8px;">Q1: An invoice shows a $30 freight variance against the purchase order. According to SOP v3.2, what should the operator do?</div>
           <label style="display: block; margin-bottom: 6px; cursor: pointer;"><input type="radio" name="test-q1" value="a"> Auto-approve without checking FOB terms.</label>
           <label style="display: block; margin-bottom: 6px; cursor: pointer;"><input type="radio" name="test-q1" value="b"> Check PO FOB terms, flag variance for client review if unapproved.</label>
           <label style="display: block; cursor: pointer;"><input type="radio" name="test-q1" value="c"> Reject entire vendor relationship.</label>
         </div>
 
-        <div style="background: var(--bg-surface-subtle); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-light);">
+        <div style="background: var(--bg-surface-alt); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-light);">
           <div style="font-weight: 700; margin-bottom: 8px;">Q2: An enterprise account ($120k ARR) requests an exception 5 days past refund policy. How should you handle?</div>
           <label style="display: block; margin-bottom: 6px; cursor: pointer;"><input type="radio" name="test-q2" value="a"> Quote the rigid 30-day rule verbatim and deny immediately.</label>
           <label style="display: block; margin-bottom: 6px; cursor: pointer;"><input type="radio" name="test-q2" value="b"> Ignore the ticket for 48 hours.</label>
           <label style="display: block; cursor: pointer;"><input type="radio" name="test-q2" value="c"> Offer service extension credits with empathetic tone and notify Account Executive.</label>
         </div>
 
-        <div style="background: var(--bg-surface-subtle); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-light);">
+        <div style="background: var(--bg-surface-alt); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-light);">
           <div style="font-weight: 700; margin-bottom: 8px;">Q3: What is the core rule regarding AI hallucinations in data extraction deliverables?</div>
           <label style="display: block; margin-bottom: 6px; cursor: pointer;"><input type="radio" name="test-q3" value="a"> Every factual claim must cite a verified source URL or provided context document.</label>
           <label style="display: block; margin-bottom: 6px; cursor: pointer;"><input type="radio" name="test-q3" value="b"> AI outputs never have hallucinations and require no verification.</label>
@@ -543,14 +610,17 @@
     </div>
   </div>
 
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
   <!-- Footer -->
   <footer class="fl-footer">
     <div class="container">
       <div class="fl-footer-grid">
         <div class="fl-footer-col">
-          <div class="fl-logo-wrap" style="margin-bottom: 14px;">
-            <div class="fl-logo-icon">⚡</div>
-            <div class="fl-logo-text" style="color: #fff;">TrainedForce</div>
+          <div class="fl-brand" style="margin-bottom: 14px;">
+            <div class="brand-icon">⚡</div>
+            <div class="brand-title" style="color: #fff;">TrainedForce</div>
           </div>
           <p style="line-height: 1.6; max-width: 320px;">
             The enterprise marketplace and internal operations engine for AI-assisted verified knowledge work.
