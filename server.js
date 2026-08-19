@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const crypto = require('crypto');
 const db = require('./db');
 
 const app = express();
@@ -14,13 +15,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use((req, res, next) => {
   const userId = req.headers['x-user-id'] || 'usr_client_1';
   const data = db.get();
-  req.currentUser = data.users.find(u => u.id === userId) || data.users[1];
+  req.currentUser = (data.users && data.users.find(u => u.id === userId)) || (data.users && data.users[1]) || { id: 'usr_client_1', name: 'Sarah Jenkins', role: 'client' };
   next();
 });
 
+// Helper for SHA-256 generation
+function generateShaProof(payload) {
+  return crypto.createHash('sha256').update(JSON.stringify(payload) + Date.now().toString()).digest('hex');
+}
+
 // --- API ENDPOINTS ---
 
-// 1. STATS & OVERVIEW
+// 1. STATS & LIVE TELEMETRY
 app.get('/api/stats', (req, res) => {
   const data = db.get();
   const tasks = data.tasks;
@@ -41,7 +47,25 @@ app.get('/api/stats', (req, res) => {
   });
 });
 
-// 2. AUTHENTICATION & USER MANAGEMENT
+app.get('/api/telemetry/timeseries', (req, res) => {
+  // Generate 24-hour telemetry curve for latency, accuracy, and task throughput
+  const hours = [];
+  const now = new Date();
+  for (let i = 23; i >= 0; i--) {
+    const d = new Date(now.getTime() - i * 3600000);
+    const hourLabel = d.getHours() + ':00';
+    hours.push({
+      time: hourLabel,
+      throughput: Math.floor(180 + Math.random() * 80),
+      latencyMs: Math.floor(280 + Math.random() * 45),
+      accuracyPct: (99.3 + Math.random() * 0.6).toFixed(2),
+      activeWorkers: Math.floor(280 + Math.random() * 35)
+    });
+  }
+  res.json(hours);
+});
+
+// 2. AUTHENTICATION & USERS
 app.get('/api/auth/users', (req, res) => {
   const data = db.get();
   res.json(data.users);
@@ -58,7 +82,7 @@ app.post('/api/auth/login', (req, res) => {
 });
 
 app.post('/api/auth/register', (req, res) => {
-  const { name, email, role, specialty, company, country } = req.body;
+  const { name, email, role, specialty, company, country, city, hourlyRate } = req.body;
   if (!name || !email || !role) {
     return res.status(400).json({ success: false, message: 'Name, email, and role are required' });
   }
@@ -69,12 +93,15 @@ app.post('/api/auth/register', (req, res) => {
     email,
     role, // 'client' | 'worker'
     company: company || (role === 'client' ? 'Independent Enterprise' : null),
-    specialty: specialty || 'General Knowledge Ops',
+    specialty: specialty || 'General Knowledge Ops QA',
     country: country || (role === 'worker' ? 'Pakistan' : 'United States'),
+    city: city || (role === 'worker' ? 'Lahore' : 'San Francisco'),
     badge: role === 'worker' ? 'Certified AI Operator Candidate' : 'Enterprise Client',
-    accuracy: role === 'worker' ? 98.0 : undefined,
+    accuracy: role === 'worker' ? 98.5 : undefined,
+    hourlyRate: hourlyRate || (role === 'worker' ? 15 : undefined),
     tasksCompleted: 0,
     avatar: role === 'worker' ? '⚡' : '💼',
+    radar: role === 'worker' ? { accuracy: 98, speed: 90, domainKnowledge: 92, sopCompliance: 96, exceptionHandling: 90 } : undefined,
     createdAt: new Date().toISOString()
   };
 
@@ -88,13 +115,44 @@ app.post('/api/auth/register', (req, res) => {
   res.json({ success: true, user: newUser });
 });
 
-// 3. SERVICES CATALOG
+// 3. SERVICES CATALOG & WORKFLOW TEMPLATES
 app.get('/api/services', (req, res) => {
   const data = db.get();
   res.json(data.services);
 });
 
-// 4. TASKS & WORKFLOW ENGINE
+// 4. SQUADS & SQUAD BUILDER
+app.get('/api/squads', (req, res) => {
+  const data = db.get();
+  res.json(data.squadTemplates);
+});
+
+app.post('/api/squads/deploy', (req, res) => {
+  const { squadName, serviceId, squadSize = 3, slaTarget = '< 15 Mins', operators = [], clientId } = req.body;
+  const data = db.get();
+
+  const newSquad = {
+    id: `sq_cust_${Date.now()}`,
+    name: squadName || 'Custom Enterprise AI Squad',
+    serviceId: serviceId || 'srv_finance',
+    squadSize: Number(squadSize),
+    slaTarget,
+    status: 'ACTIVE_PROVISIONED',
+    operators: operators.length ? operators : ['Bilal Tariq', 'Fatima Noor'],
+    priceMonthly: Math.round(Number(squadSize) * 1450),
+    clientId: clientId || 'usr_client_1',
+    createdAt: new Date().toISOString()
+  };
+
+  db.update(d => {
+    d.stats.activeSquads = (d.stats.activeSquads || 16) + 1;
+    d.stats.activePilots = (d.stats.activePilots || 24) + 1;
+  });
+
+  res.json({ success: true, squad: newSquad });
+});
+
+// 5. TASKS & WORKFLOW ENGINE
 app.get('/api/tasks', (req, res) => {
   const { status, role, userId } = req.query;
   const data = db.get();
@@ -107,7 +165,6 @@ app.get('/api/tasks', (req, res) => {
     tasks = tasks.filter(t => t.clientId === userId);
   }
 
-  // Sort latest first
   tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   res.json(tasks);
 });
@@ -120,7 +177,7 @@ app.get('/api/tasks/:id', (req, res) => {
 });
 
 app.post('/api/tasks', (req, res) => {
-  const { title, serviceId, inputSummary, priority, clientId, clientName } = req.body;
+  const { title, serviceId, inputSummary, priority, clientId, clientName, customTokens } = req.body;
   if (!title || !serviceId) {
     return res.status(400).json({ error: 'Title and Service ID are required' });
   }
@@ -128,8 +185,16 @@ app.post('/api/tasks', (req, res) => {
   const taskId = `TSK-${Math.floor(1000 + Math.random() * 9000)}`;
   const now = new Date().toISOString();
 
-  // AI draft simulation based on service type
-  let simulatedAiDraft = `[AI Pipeline Ingestion: Gemini 2.5 Pro]\n- Analyzed input payload.\n- Automated extraction confidence score: 97.4%.\n- Preliminary draft generated according to SOP standard.\n- Requires human operator sign-off and exception audit.`;
+  let simulatedAiDraft = `[AI Pipeline Ingestion: Gemini 2.5 Pro]\n- Analyzed input payload.\n- Automated extraction confidence score: 98.8%.\n- Preliminary draft generated according to SOP standard.\n- Requires human operator sign-off and exception audit.`;
+
+  const tokens = customTokens || [
+    { text: "Payload Summary:", conf: 0.998 },
+    { text: title, conf: 0.992 },
+    { text: "| Confidence Score:", conf: 0.988 },
+    { text: "98.8% Gemini 2.5 Pro", conf: 0.988 },
+    { text: "| Status:", conf: 0.96 },
+    { text: "PENDING_OPERATOR_SIGN_OFF", conf: 0.95, anomaly: false }
+  ];
 
   const newTask = {
     id: taskId,
@@ -145,13 +210,15 @@ app.post('/api/tasks', (req, res) => {
     completedAt: null,
     turnaroundSeconds: null,
     accuracyScore: null,
+    sha256Proof: null,
     inputSummary: inputSummary || 'Structured client payload submitted.',
     aiDraft: simulatedAiDraft,
+    tokens: tokens,
     operatorNotes: '',
     auditLog: [
-      { time: now, action: 'Workflow Created & Payload Ingested', actor: clientName || 'Enterprise Client' },
-      { time: now, action: 'AI Model Inference & Auto-Drafting Complete', actor: 'Gemini 2.5 Pipeline' },
-      { time: now, action: 'Queued for Human Operator Verification', actor: 'TrainedForce Dispatcher' }
+      { time: now, action: 'Workflow Created & Ingested via API Gateway', actor: clientName || 'Enterprise Client' },
+      { time: now, action: 'Gemini 2.5 Pro Inference Complete (98.8% Confidence)', actor: 'Gemini 2.5 Pipeline' },
+      { time: now, action: 'Dispatched to Verified Human Operator QA Station', actor: 'TrainedForce Dispatcher' }
     ]
   };
 
@@ -187,7 +254,7 @@ app.post('/api/tasks/:id/claim', (req, res) => {
 
 // Worker Complete / Verify Task
 app.post('/api/tasks/:id/verify', (req, res) => {
-  const { operatorNotes, accuracyScore, actionType } = req.body; // actionType: 'verify' | 'escalate'
+  const { operatorNotes, accuracyScore, actionType, correctedTokens } = req.body;
   const taskId = req.params.id;
   const now = new Date().toISOString();
 
@@ -208,13 +275,22 @@ app.post('/api/tasks/:id/verify', (req, res) => {
       task.completedAt = now;
       task.operatorNotes = operatorNotes || 'Quality checklist passed. Verified compliant with SOP.';
       task.accuracyScore = accuracyScore || 100;
-      task.turnaroundSeconds = Math.floor(180 + Math.random() * 240);
+      task.turnaroundSeconds = Math.floor(160 + Math.random() * 180);
+      task.sha256Proof = generateShaProof(task);
+      if (correctedTokens) task.tokens = correctedTokens;
+
       task.auditLog.push({
         time: now,
         action: `Verified & Certified Compliant (Score: ${task.accuracyScore}%)`,
         actor: task.workerName || 'Operator'
       });
+      task.auditLog.push({
+        time: now,
+        action: `Cryptographic SHA-256 Seal Minted: ${task.sha256Proof.substring(0, 16)}...`,
+        actor: 'TrainedForce Cryptographic Ledger'
+      });
       data.stats.totalTasksCompleted += 1;
+      data.stats.shaProofVerifications = (data.stats.shaProofVerifications || 148920) + 1;
     }
     return task;
   });
@@ -223,23 +299,51 @@ app.post('/api/tasks/:id/verify', (req, res) => {
   res.json({ success: true, task: updatedTask });
 });
 
-// 5. CUSTOMER DISCOVERY & ROI CALCULATOR
+// 6. CRYPTOGRAPHIC PROOF VERIFIER (PUBLIC LOOKUP)
+app.get('/api/verify/:certId', (req, res) => {
+  const data = db.get();
+  const certId = req.params.certId;
+  const task = data.tasks.find(t => t.id === certId || t.sha256Proof === certId);
+
+  if (task) {
+    return res.json({
+      valid: true,
+      taskId: task.id,
+      title: task.title,
+      clientName: task.clientName,
+      operatorName: task.workerName,
+      accuracyScore: task.accuracyScore,
+      completedAt: task.completedAt,
+      sha256Proof: task.sha256Proof,
+      auditLength: task.auditLog.length,
+      complianceStatus: 'SOC2 TYPE II & HIPAA AUDIT COMPLIANT'
+    });
+  }
+
+  res.json({
+    valid: false,
+    message: 'Cryptographic proof hash not found or expired.'
+  });
+});
+
+// 7. CUSTOMER DISCOVERY & ROI ENGINE
 app.post('/api/discovery/score', (req, res) => {
   const {
-    frequency = 3,
-    pain = 4,
+    frequency = 4,
+    pain = 5,
     economicImpact = 4,
     measurability = 4,
     remoteDeliverability = 5,
-    aiSuitability = 4,
-    buyerAccess = 3,
+    aiSuitability = 5,
+    buyerAccess = 4,
     urgency = 4,
     company,
     industry,
     role,
     workflow,
-    monthlyCost = 15000,
-    hoursPerWeek = 40
+    monthlyCost = 18000,
+    hoursPerWeek = 40,
+    onshoreFteCount = 4
   } = req.body;
 
   const totalPainScore = Number(frequency) + Number(pain) + Number(economicImpact) +
@@ -249,29 +353,32 @@ app.post('/api/discovery/score', (req, res) => {
   let recommendation = "Low Priority (Score < 16) — Do not pursue without further evidence";
   let color = "red";
   if (totalPainScore >= 32) {
-    recommendation = "High Priority (32–40) — Immediate Pilot Candidate. High ROI & AI Fit.";
-    color = "green";
+    recommendation = "High Priority (32–40) — Immediate Pilot Candidate. Massive ROI & Ideal AI-Human Fit.";
+    color = "emerald";
   } else if (totalPainScore >= 24) {
-    recommendation = "Investigate (24–31) — Strong potential. Refine SOP & exception boundary.";
+    recommendation = "Investigate (24–31) — Strong potential. Refine SOP & exception boundaries.";
     color = "amber";
   }
 
-  // Calculate economics
-  const estimatedSavings = Math.round(monthlyCost * 0.68);
-  const estimatedTrainedForceCost = Math.round(monthlyCost * 0.32);
-  const turnaroundSpeedBoost = "4.2x Faster";
+  const estimatedSavings = Math.round(monthlyCost * 0.74);
+  const estimatedTrainedForceCost = Math.round(monthlyCost * 0.26);
+  const annualSavings = estimatedSavings * 12;
+  const threeYearSavings = annualSavings * 3;
 
   const newRecord = {
     id: `disc_${Date.now()}`,
     company: company || 'Enterprise Prospect',
-    industry: industry || 'Tech/SaaS',
-    role: role || 'Operations Leader',
-    workflow: workflow || 'Repetitive Knowledge Task',
+    industry: industry || 'B2B SaaS / FinTech',
+    role: role || 'VP Operations / CFO',
+    workflow: workflow || 'High-Friction Knowledge Ops',
     painScore: totalPainScore,
     currentCostMonthly: `$${Number(monthlyCost).toLocaleString()}`,
     estimatedSavings: `$${estimatedSavings.toLocaleString()}/mo`,
     estimatedTrainedForceCost: `$${estimatedTrainedForceCost.toLocaleString()}/mo`,
+    annualSavings: `$${annualSavings.toLocaleString()}/yr`,
+    threeYearSavings: `$${threeYearSavings.toLocaleString()}`,
     hoursPerWeek,
+    onshoreFteCount,
     recommendation,
     createdAt: new Date().toISOString()
   };
@@ -284,14 +391,23 @@ app.post('/api/discovery/score', (req, res) => {
     painScore: totalPainScore,
     recommendation,
     breakdown: {
-      frequency, pain, economicImpact, measurability, remoteDeliverability, aiSuitability, buyerAccess, urgency
+      frequency: Number(frequency),
+      pain: Number(pain),
+      economicImpact: Number(economicImpact),
+      measurability: Number(measurability),
+      remoteDeliverability: Number(remoteDeliverability),
+      aiSuitability: Number(aiSuitability),
+      buyerAccess: Number(buyerAccess),
+      urgency: Number(urgency)
     },
     economics: {
       currentMonthly: monthlyCost,
       trainedForceMonthly: estimatedTrainedForceCost,
       monthlySavings: estimatedSavings,
-      annualSavings: estimatedSavings * 12,
-      turnaroundSpeedBoost
+      annualSavings,
+      threeYearSavings,
+      turnaroundSpeedBoost: "4.8x Faster",
+      accuracySla: "99.6%"
     },
     record: newRecord
   });
@@ -302,7 +418,7 @@ app.get('/api/discovery/records', (req, res) => {
   res.json(data.discoveryRecords);
 });
 
-// 6. CMS / SOP KNOWLEDGE BASE
+// 8. CMS / SOP BLUEPRINTS & LIVE TEST SANDBOX
 app.get('/api/cms/sops', (req, res) => {
   const data = db.get();
   res.json(data.sops);
@@ -330,19 +446,45 @@ app.post('/api/cms/sops', (req, res) => {
   res.json({ success: true, sop: newSop });
 });
 
-// 7. OPERATOR ONBOARDING TEST SUBMISSION
+// Test SOP against sample input
+app.post('/api/cms/sops/test', (req, res) => {
+  const { sopId, testPayload } = req.body;
+  const data = db.get();
+  const sop = data.sops.find(s => s.id === sopId) || data.sops[0];
+
+  const violations = [];
+  const passedRules = [];
+
+  sop.rules.forEach((rule, idx) => {
+    // Simple heuristic rule check
+    if (rule.toLowerCase().includes('freight') && testPayload && testPayload.toLowerCase().includes('freight') && testPayload.includes('unauthorized')) {
+      violations.push({ rule, severity: 'HIGH', note: 'Detected unauthorized freight line item requires PO FOB verification.' });
+    } else if (rule.toLowerCase().includes('rounding') && testPayload && testPayload.includes('$4.')) {
+      passedRules.push({ rule, note: 'Rounding delta < $5.00 within permissible tolerance.' });
+    } else {
+      passedRules.push({ rule, note: 'Rule check satisfied.' });
+    }
+  });
+
+  res.json({
+    sopTitle: sop.title,
+    complianceScore: violations.length ? 85.0 : 100.0,
+    status: violations.length ? 'FLAGGED_FOR_HUMAN_REVIEW' : 'SOP_PASSED',
+    violations,
+    passedRules
+  });
+});
+
+// 9. OPERATOR ONBOARDING & CERTIFICATION TEST
 app.post('/api/workers/onboard-test', (req, res) => {
   const { answers, workerId } = req.body;
-  // Evaluate answers
-  // Q1: What to do with variance > $10? Answer: Compare FOB terms on PO, flag for review.
-  // Q2: When customer is high LTV? Answer: Offer extension credit with empathy, avoid rigid policy refusal.
-  // Q3: Rule for LLM hallucination factual claims? Answer: Every claim must cite verified source URL or provided context.
-  
   let score = 100;
   if (answers) {
     if (answers.q1 !== 'b') score -= 20;
     if (answers.q2 !== 'c') score -= 20;
     if (answers.q3 !== 'a') score -= 20;
+    if (answers.q4 && answers.q4 !== 'a') score -= 20;
+    if (answers.q5 && answers.q5 !== 'b') score -= 20;
   }
 
   const passed = score >= 80;
@@ -361,7 +503,7 @@ app.post('/api/workers/onboard-test', (req, res) => {
     passed,
     badge: passed ? 'Certified AI Operator (Verified Level-1)' : 'Needs Review',
     feedback: passed
-      ? 'Congratulations! You demonstrated strong SOP adherence and AI exception handling. You are now eligible to claim live tasks in the queue.'
+      ? 'Outstanding! You scored ' + score + '% on SOP adherence and AI exception handling. You are now authorized to claim live tasks.'
       : 'Review the TrainedForce SOP blueprints and retake the qualification assessment.'
   });
 });
@@ -372,5 +514,5 @@ app.get('*', (req, res) => {
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`⚡ TrainedForce Enterprise Platform running on http://0.0.0.0:${PORT}`);
+  console.log(`⚡ TrainedForce Enterprise Quantum OS running on http://0.0.0.0:${PORT}`);
 });

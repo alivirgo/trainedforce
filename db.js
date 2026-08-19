@@ -5,21 +5,26 @@ const DB_FILE = path.join(__dirname, 'data_store.json');
 
 const INITIAL_DATA = {
   stats: {
-    totalTasksCompleted: 142850,
-    activeOperators: 284,
-    globalModelAccuracy: 99.4,
-    avgTurnaroundMinutes: 4.8,
-    costSavingsPercentage: 72,
-    activePilots: 18
+    totalTasksCompleted: 148920,
+    activeOperators: 312,
+    globalModelAccuracy: 99.6,
+    avgTurnaroundMinutes: 4.2,
+    costSavingsPercentage: 74,
+    activePilots: 24,
+    activeSquads: 16,
+    apiRequestsToday: 89420,
+    shaProofVerifications: 148920
   },
   users: [
     {
       id: "usr_admin",
-      name: "Operations Commander",
+      name: "Commander Alex Mercer",
       email: "admin@trainedforce.com",
       role: "admin",
-      badge: "Ops Lead",
-      avatar: "👑"
+      badge: "Global Operations Lead",
+      avatar: "👑",
+      country: "United States",
+      timezone: "UTC-5"
     },
     {
       id: "usr_client_1",
@@ -27,30 +32,87 @@ const INITIAL_DATA = {
       company: "Acuity Health SaaS (US)",
       email: "sarah@acuityhealth.io",
       role: "client",
-      balance: 14500,
-      avatar: "💼"
+      balance: 24500,
+      avatar: "💼",
+      country: "United States",
+      tier: "Enterprise Tier-1",
+      activeSquads: 2
+    },
+    {
+      id: "usr_client_2",
+      name: "Marcus Vance",
+      company: "Vanguard Global Logistics",
+      email: "marcus@vanguardlogistics.com",
+      role: "client",
+      balance: 18200,
+      avatar: "🚢",
+      country: "United Kingdom",
+      tier: "Enterprise Pro",
+      activeSquads: 1
     },
     {
       id: "usr_worker_1",
       name: "Bilal Tariq",
       email: "bilal@trainedforce.com",
       role: "worker",
-      badge: "Senior Tier-3 Operator (Pakistan)",
-      accuracy: 99.6,
-      tasksCompleted: 3410,
-      specialty: "Finance & Data Extraction QA",
-      avatar: "⚡"
+      badge: "Lead Finance QA Specialist (Pakistan)",
+      accuracy: 99.8,
+      tasksCompleted: 3840,
+      specialty: "Finance & ERP Reconciliation QA",
+      avatar: "⚡",
+      country: "Pakistan",
+      city: "Lahore",
+      hourlyRate: 16,
+      skills: ["PO Reconciliation", "ERP Audit", "Exception Triage", "Tax Rules", "HIPAA Compliance"],
+      radar: { accuracy: 99.8, speed: 96, domainKnowledge: 98, sopCompliance: 100, exceptionHandling: 97 }
     },
     {
       id: "usr_worker_2",
       name: "Fatima Noor",
       email: "fatima@trainedforce.com",
       role: "worker",
-      badge: "Lead AI Evaluator (Pakistan)",
-      accuracy: 99.8,
-      tasksCompleted: 4890,
+      badge: "Senior CX & Moderation Lead (Pakistan)",
+      accuracy: 99.9,
+      tasksCompleted: 5210,
       specialty: "Customer Support & Content Moderation",
-      avatar: "🌟"
+      avatar: "🌟",
+      country: "Pakistan",
+      city: "Karachi",
+      hourlyRate: 14,
+      skills: ["Customer Empathy", "Refund Triage", "Tone Calibration", "SLA Escalation", "Zendesk API"],
+      radar: { accuracy: 99.9, speed: 98, domainKnowledge: 96, sopCompliance: 99, exceptionHandling: 99 }
+    },
+    {
+      id: "usr_worker_3",
+      name: "Usman Raza",
+      email: "usman@trainedforce.com",
+      role: "worker",
+      badge: "Catalog & RLHF Lead (Pakistan)",
+      accuracy: 99.5,
+      tasksCompleted: 2680,
+      specialty: "E-Commerce Taxonomy & LLM RLHF",
+      avatar: "🚀",
+      country: "Pakistan",
+      city: "Islamabad",
+      hourlyRate: 15,
+      skills: ["SKU Tagging", "Multilingual QA", "Hallucination Check", "CSV Pipelines", "Google Merchant"],
+      radar: { accuracy: 99.5, speed: 94, domainKnowledge: 95, sopCompliance: 98, exceptionHandling: 95 }
+    },
+    {
+      id: "usr_worker_4",
+      name: "Zainab Malik",
+      email: "zainab@trainedforce.com",
+      role: "worker",
+      badge: "RevOps & Lead Signal Auditor (Pakistan)",
+      accuracy: 99.7,
+      tasksCompleted: 3120,
+      specialty: "RevOps B2B Enrichment & Verification",
+      avatar: "🎯",
+      country: "Pakistan",
+      city: "Lahore",
+      hourlyRate: 15,
+      skills: ["Executive Verification", "CRM Sync", "Tech Stack Audit", "Lead Scoring", "Apollo/HubSpot"],
+      radar: { accuracy: 99.7, speed: 97, domainKnowledge: 97, sopCompliance: 99, exceptionHandling: 96 }
     }
   ],
   services: [
@@ -61,7 +123,9 @@ const INITIAL_DATA = {
       description: "AI drafts tier-1 & 2 responses; trained human operators verify tone, policy compliance, and resolve complex exceptions with < 5 min SLA.",
       sla: "5 mins",
       accuracyTarget: "99.5%",
-      basePrice: "$0.45 / resolution"
+      basePrice: "$0.45 / resolution",
+      icon: "🎧",
+      models: ["Gemini 2.5 Pro", "Claude 3.7 Sonnet"]
     },
     {
       id: "srv_finance",
@@ -70,7 +134,9 @@ const INITIAL_DATA = {
       description: "Extract line items, match POs across ERPs, verify tax calculations, and flag anomalies with human certified sign-off.",
       sla: "15 mins",
       accuracyTarget: "99.9%",
-      basePrice: "$0.85 / document"
+      basePrice: "$0.85 / document",
+      icon: "📊",
+      models: ["Gemini 2.5 Pro", "DeepSeek-R1-OCR"]
     },
     {
       id: "srv_ecommerce",
@@ -79,7 +145,9 @@ const INITIAL_DATA = {
       description: "Multilingual attribute tagging, competitor pricing cross-checks, image compliance verification, and SEO metadata generation.",
       sla: "2 hours",
       accuracyTarget: "99.0%",
-      basePrice: "$0.30 / SKU"
+      basePrice: "$0.30 / SKU",
+      icon: "🛍️",
+      models: ["Gemini 2.5 Flash", "Vision Pro-1"]
     },
     {
       id: "srv_revops",
@@ -88,7 +156,9 @@ const INITIAL_DATA = {
       description: "AI scrapes executive career moves and tech stacks; operators verify decision maker contacts and company fit criteria.",
       sla: "1 hour",
       accuracyTarget: "98.8%",
-      basePrice: "$0.65 / lead"
+      basePrice: "$0.65 / lead",
+      icon: "🎯",
+      models: ["Gemini 2.5 Pro", "Perplexity Search Pipeline"]
     },
     {
       id: "srv_aiqa",
@@ -97,7 +167,47 @@ const INITIAL_DATA = {
       description: "Rigorous human evaluation of model outputs, hallucination checks, safety tagging, and specialized domain annotation.",
       sla: "Custom",
       accuracyTarget: "99.8%",
-      basePrice: "$1.20 / annotation"
+      basePrice: "$1.20 / annotation",
+      icon: "🧠",
+      models: ["Gemini 2.5 Pro", "Meta Llama 3.3"]
+    }
+  ],
+  squadTemplates: [
+    {
+      id: "sq_fin_ops",
+      name: "Finance AP/AR Automation Squad",
+      category: "Finance & Accounting",
+      description: "2 Dedicated Pakistan Finance QA Operators + 1 Escalation Supervisor + Gemini 2.5 Ingestion Node.",
+      capacityMonthly: "4,500 Invoices / mo",
+      sla: "< 15 Mins",
+      priceMonthly: 2900,
+      onshoreEquivalentCost: 11000,
+      operators: ["Bilal Tariq", "Fatima Noor"],
+      badge: "Enterprise Squad"
+    },
+    {
+      id: "sq_cx_triage",
+      name: "24/7 AI Customer Support Triage Squad",
+      category: "Customer Support",
+      description: "3 Support QA Operators + 1 Shift Lead + Gemini 2.5 Tone Calibration Pipeline.",
+      capacityMonthly: "8,000 Tickets / mo",
+      sla: "< 5 Mins",
+      priceMonthly: 3800,
+      onshoreEquivalentCost: 15500,
+      operators: ["Fatima Noor", "Zainab Malik"],
+      badge: "High Velocity"
+    },
+    {
+      id: "sq_rlhf_ground",
+      name: "Ground-Truth & RLHF Verification Squad",
+      category: "AI & ML Data",
+      description: "2 Specialized Domain Annotators + 1 Senior QA Auditor + Multi-Model Benchmark Suite.",
+      capacityMonthly: "3,000 Evaluations / mo",
+      sla: "< 30 Mins",
+      priceMonthly: 3200,
+      onshoreEquivalentCost: 13000,
+      operators: ["Usman Raza", "Bilal Tariq"],
+      badge: "AI Frontier"
     }
   ],
   tasks: [
@@ -115,14 +225,28 @@ const INITIAL_DATA = {
       completedAt: "2026-08-19T20:21:00Z",
       turnaroundSeconds: 360,
       accuracyScore: 100,
+      sha256Proof: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       inputSummary: "Vendor Invoice #INV-9904 vs PO-4481. Total amount mismatch: $14,230 vs $14,200.",
       aiDraft: "Extracted line item 4 tax delta ($30.00 expedited freight fee not authorized on original PO). Recommended action: Hold payment and trigger Vendor Clarification Notice.",
+      tokens: [
+        { text: "Vendor:", conf: 0.998 },
+        { text: "Apex Medical Systems", conf: 0.995 },
+        { text: "| Invoice:", conf: 0.999 },
+        { text: "#INV-9904", conf: 0.994 },
+        { text: "| PO:", conf: 0.998 },
+        { text: "#PO-4481", conf: 0.992 },
+        { text: "| Line 4 Freight Fee:", conf: 0.962, anomaly: true },
+        { text: "$30.00 UNAUTHORIZED", conf: 0.941, anomaly: true },
+        { text: "| Recommendation:", conf: 0.99 },
+        { text: "HOLD_PAYMENT", conf: 0.996 }
+      ],
       operatorNotes: "Confirmed PO-4481 freight terms specify FOB Destination. AI correctly caught $30 freight variance. Passed verification checklist.",
       auditLog: [
-        { time: "2026-08-19T20:15:00Z", action: "Task Ingested via Client API", actor: "System" },
+        { time: "2026-08-19T20:15:00Z", action: "Task Ingested via Client API", actor: "Acuity Health Gateway" },
         { time: "2026-08-19T20:15:04Z", action: "AI Pipeline Extraction & Draft Generated (Confidence 98.2%)", actor: "Gemini 2.5 Pro Pipeline" },
         { time: "2026-08-19T20:16:30Z", action: "Claimed for Human QA Verification", actor: "Bilal Tariq (Operator #PK-219)" },
-        { time: "2026-08-19T20:21:00Z", action: "Quality Checklist Passed & Verified (100% Accuracy)", actor: "Bilal Tariq" }
+        { time: "2026-08-19T20:21:00Z", action: "Quality Checklist Passed & Verified (100% Accuracy)", actor: "Bilal Tariq" },
+        { time: "2026-08-19T20:21:02Z", action: "Cryptographic SHA-256 Proof Generated & Dispatched", actor: "TrainedForce Ledger" }
       ]
     },
     {
@@ -139,12 +263,23 @@ const INITIAL_DATA = {
       completedAt: "2026-08-19T21:44:12Z",
       turnaroundSeconds: 252,
       accuracyScore: 99.5,
+      sha256Proof: "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
       inputSummary: "Enterprise customer requesting refund for 4 enterprise licenses after 35-day window citing delayed onboarding.",
       aiDraft: "Standard policy: Disallow refunds beyond 30 days. Proposed compromise: Credit 1 month extension to avoid churn.",
+      tokens: [
+        { text: "Customer:", conf: 0.999 },
+        { text: "BioGenomics Corp ($120k ARR)", conf: 0.985 },
+        { text: "| Request:", conf: 0.995 },
+        { text: "Refund 4 Seats @ $1,800", conf: 0.978 },
+        { text: "| Policy Window:", conf: 0.992 },
+        { text: "35 Days (Past 30d SLA)", conf: 0.965, anomaly: true },
+        { text: "| Concession:", conf: 0.99 },
+        { text: "1-Month Complimentary Extension", conf: 0.982 }
+      ],
       operatorNotes: "Checked CRM history: Account has $120k ARR lifetime value. Authorized 1-month credit extension and notified Account Executive. Tone calibrated for high-touch partner.",
       auditLog: [
-        { time: "2026-08-19T21:40:00Z", action: "Zendesk Webhook Received", actor: "System" },
-        { time: "2026-08-19T21:40:08Z", action: "AI Generated Draft & Customer Sentiment Analysis", actor: "AI Core" },
+        { time: "2026-08-19T21:40:00Z", action: "Zendesk Webhook Received", actor: "Zendesk Connector" },
+        { time: "2026-08-19T21:40:08Z", action: "AI Generated Draft & Customer Sentiment Analysis", actor: "Gemini 2.5 Pro" },
         { time: "2026-08-19T21:41:00Z", action: "Claimed by Senior Operator", actor: "Fatima Noor" },
         { time: "2026-08-19T21:44:12Z", action: "Verified & Dispatched to Zendesk API", actor: "Fatima Noor" }
       ]
@@ -153,8 +288,8 @@ const INITIAL_DATA = {
       id: "TSK-8923",
       title: "E-Commerce Luxury Footwear Taxonomy & Attribute Tagging",
       serviceId: "srv_ecommerce",
-      clientId: "usr_client_1",
-      clientName: "Acuity Health SaaS",
+      clientId: "usr_client_2",
+      clientName: "Vanguard Global Logistics",
       workerId: null,
       workerName: null,
       status: "in_worker_review",
@@ -163,12 +298,21 @@ const INITIAL_DATA = {
       completedAt: null,
       turnaroundSeconds: null,
       accuracyScore: null,
+      sha256Proof: null,
       inputSummary: "Batch of 45 new Italian leather footwear SKUs needing Google Merchant taxonomy, material composition, and SEO title optimization.",
       aiDraft: "AI generated 45 attribute sets. Flagged SKU #IT-9012 for ambiguous sole material (Rubber vs Polyurethane).",
+      tokens: [
+        { text: "Batch:", conf: 0.995 },
+        { text: "45 SKUs", conf: 0.99 },
+        { text: "| Taxonomy:", conf: 0.985 },
+        { text: "Apparel > Shoes > Footwear", conf: 0.992 },
+        { text: "| Flagged SKU:", conf: 0.97 },
+        { text: "#IT-9012 Ambiguous Sole Material", conf: 0.92, anomaly: true }
+      ],
       operatorNotes: "",
       auditLog: [
         { time: "2026-08-19T22:30:00Z", action: "Batch Catalog CSV Ingested", actor: "Client Portal" },
-        { time: "2026-08-19T22:31:00Z", action: "AI Auto-Classification Complete (94.8% Confidence)", actor: "AI Pipeline" },
+        { time: "2026-08-19T22:31:00Z", action: "AI Auto-Classification Complete (94.8% Confidence)", actor: "Gemini 2.5 Flash" },
         { time: "2026-08-19T22:32:00Z", action: "Awaiting Operator Claim in QA Queue", actor: "Dispatch System" }
       ]
     },
@@ -186,12 +330,21 @@ const INITIAL_DATA = {
       completedAt: null,
       turnaroundSeconds: null,
       accuracyScore: null,
+      sha256Proof: null,
       inputSummary: "SOC2 Type II vs ISO 27001 mapping for 28 vendor sub-processors.",
       aiDraft: "Processing automated cross-referencing against NIST SP 800-53 controls...",
+      tokens: [
+        { text: "Frameworks:", conf: 0.999 },
+        { text: "SOC2 Type II / ISO 27001", conf: 0.992 },
+        { text: "| Sub-processors:", conf: 0.98 },
+        { text: "28 Cloud Vendors", conf: 0.985 },
+        { text: "| Status:", conf: 0.96 },
+        { text: "Inference in Progress...", conf: 0.91, anomaly: true }
+      ],
       operatorNotes: "",
       auditLog: [
         { time: "2026-08-19T23:10:00Z", action: "Document Uploaded", actor: "Client" },
-        { time: "2026-08-19T23:10:15Z", action: "AI Ingestion in Progress", actor: "Pipeline" }
+        { time: "2026-08-19T23:10:15Z", action: "AI Ingestion in Progress", actor: "Gemini 2.5 Pro Pipeline" }
       ]
     }
   ],
@@ -205,7 +358,8 @@ const INITIAL_DATA = {
       rules: [
         "Variances under $5.00 due to rounding: Auto-approve with note.",
         "Freight/shipping discrepancies > $10.00: Compare against FOB terms on PO. Flag for client review if unapproved.",
-        "Tax rate mismatch: Verify state/provincial tax ID before manual adjustment."
+        "Tax rate mismatch: Verify state/provincial tax ID before manual adjustment.",
+        "Require double-key operator verification for invoice sums exceeding $25,000."
       ]
     },
     {
@@ -217,7 +371,8 @@ const INITIAL_DATA = {
       rules: [
         "Never cite policy rigidity to Tier-1 enterprise accounts ($50k+ ARR).",
         "Offer service extension credits up to 30 days without manager escalation.",
-        "Ensure human response tone is empathetic, concise, and solution-focused."
+        "Ensure human response tone is empathetic, concise, and solution-focused.",
+        "Always sync ticket outcome to CRM within 2 minutes of sign-off."
       ]
     },
     {
@@ -229,7 +384,8 @@ const INITIAL_DATA = {
       rules: [
         "Every factual claim must cite a verified source URL or provided context document.",
         "Score hallucinations on a 1-5 severity scale (1=harmless typo, 5=dangerous fabrication).",
-        "Check mathematical calculations with built-in sandbox verifier before QA sign-off."
+        "Check mathematical calculations with built-in sandbox verifier before QA sign-off.",
+        "Zero tolerance for medical or legal hallucinated recommendations without disclaimer."
       ]
     }
   ],
@@ -237,7 +393,7 @@ const INITIAL_DATA = {
     {
       id: "disc_101",
       company: "Vanguard Logistics",
-      industry: "Supply Chain",
+      industry: "Supply Chain & Freight",
       role: "VP Operations",
       workflow: "Bill of Lading & Customs Exception Clearance",
       currentCostMonthly: "$18,500",
@@ -245,6 +401,18 @@ const INITIAL_DATA = {
       painScore: 38,
       recommendation: "High Priority - Immediate Pilot Candidate",
       status: "Pilot Scheduled"
+    },
+    {
+      id: "disc_102",
+      company: "Acuity Health SaaS",
+      industry: "HealthTech & B2B SaaS",
+      role: "Head of Customer Experience",
+      workflow: "HIPAA Support Ticket Triage & De-escalation",
+      currentCostMonthly: "$22,000",
+      hoursPerWeek: 60,
+      painScore: 39,
+      recommendation: "High Priority - Live Enterprise Pilot Active",
+      status: "Live in Production"
     }
   ]
 };
@@ -256,9 +424,16 @@ function loadData() {
       return INITIAL_DATA;
     }
     const raw = fs.readFileSync(DB_FILE, 'utf8');
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (!parsed.users || !parsed.tasks || !parsed.services || !parsed.sops) {
+      saveData(INITIAL_DATA);
+      return INITIAL_DATA;
+    }
+    if (!parsed.squadTemplates) parsed.squadTemplates = INITIAL_DATA.squadTemplates;
+    return parsed;
   } catch (err) {
     console.error("Error loading DB, reverting to initial data", err);
+    saveData(INITIAL_DATA);
     return INITIAL_DATA;
   }
 }
