@@ -1,662 +1,691 @@
-// TrainedForce Platform Core Logic
-let state = {
-  activeTab: 'overview',
-  currentUser: {
-    id: "usr_client_1",
-    name: "Sarah Jenkins",
-    company: "Acuity Health SaaS (US)",
-    email: "sarah@acuityhealth.io",
-    role: "client",
-    avatar: "💼"
-  },
-  users: [],
-  services: [],
-  tasks: [],
-  sops: [],
-  discoveryRecords: [],
-  stats: {},
-  currentInspectTask: null
-};
+/**
+ * TrainedForce Marketplace & Operations Engine
+ * Client-side Controller & UI State Handler
+ * 
+ * Authored by: Frontend & Product Engineering
+ */
 
-// API Helper
-const API = {
-  get: async (url) => {
-    const res = await fetch(url, { credentials: 'omit' });
-    return res.json();
-  },
-  post: async (url, body) => {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-      credentials: 'omit'
-    });
-    return res.json();
-  }
-};
-
-// Init
-document.addEventListener('DOMContentLoaded', async () => {
-  await loadInitialData();
-  renderAll();
-  calculatePainScore();
-});
-
-async function loadInitialData() {
-  try {
-    const [stats, users, services, tasks, sops, discoveryRecords] = await Promise.all([
-      API.get('/api/stats'),
-      API.get('/api/auth/users'),
-      API.get('/api/services'),
-      API.get('/api/tasks'),
-      API.get('/api/cms/sops'),
-      API.get('/api/discovery/records')
-    ]);
-
-    state.stats = stats;
-    state.users = users;
-    state.services = services;
-    state.tasks = tasks;
-    state.sops = sops;
-    state.discoveryRecords = discoveryRecords;
-
-    if (users && users.length > 1) {
-      state.currentUser = users[1]; // Default Sarah Jenkins (Client)
-    }
-  } catch (err) {
-    console.error("Error loading data", err);
-  }
-}
-
-function renderAll() {
-  updateUserHeader();
-  renderTelemetry();
-  renderServices();
-  renderClientTasks();
-  renderWorkerTasks();
-  renderDiscoveryRecords();
-  renderSops();
-  renderAdminTasks();
-  renderUserList();
-}
-
-// 1. Telemetry
-function renderTelemetry() {
-  if (state.stats) {
-    const accEl = document.getElementById('telemetry-accuracy');
-    const opsEl = document.getElementById('telemetry-operators');
-    const spdEl = document.getElementById('telemetry-speed');
-    const tskEl = document.getElementById('telemetry-tasks');
-
-    if (accEl) accEl.innerText = `${state.stats.globalModelAccuracy || 99.4}%`;
-    if (opsEl) opsEl.innerText = `${state.stats.activeOperators || 284} Online`;
-    if (spdEl) spdEl.innerText = `${state.stats.avgTurnaroundMinutes || 4.8} mins`;
-    if (tskEl) tskEl.innerText = `${(state.stats.totalTasksCompleted || 142850).toLocaleString()}+`;
-  }
-}
-
-// 2. Tab Navigation
-function switchTab(tabId) {
-  state.activeTab = tabId;
-
-  // Update nav buttons
-  document.querySelectorAll('.nav-item-btn').forEach(btn => btn.classList.remove('active'));
-  const activeNavBtn = document.getElementById(`nav-${tabId}`);
-  if (activeNavBtn) activeNavBtn.classList.add('active');
-
-  // Update panels
-  document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active-panel'));
-  const activePanel = document.getElementById(`panel-${tabId}`);
-  if (activePanel) activePanel.classList.add('active-panel');
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// 3. User Switcher & Header
-function updateUserHeader() {
-  const avatarEl = document.getElementById('current-user-avatar');
-  const nameEl = document.getElementById('current-user-name');
-  if (avatarEl && nameEl && state.currentUser) {
-    avatarEl.innerText = state.currentUser.avatar || '👤';
-    const roleLabel = state.currentUser.role === 'client' ? 'Client' : state.currentUser.role === 'worker' ? 'Operator' : 'Admin';
-    nameEl.innerText = `${state.currentUser.name.split(' ')[0]} (${roleLabel})`;
-  }
-}
-
-function renderUserList() {
-  const container = document.getElementById('user-persona-list');
-  if (!container) return;
-
-  container.innerHTML = state.users.map(u => `
-    <div class="glass-panel" style="padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-color: ${state.currentUser.id === u.id ? 'var(--primary)' : 'var(--border-color)'}" onclick="selectUser('${u.id}')">
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <span style="font-size: 1.5rem;">${u.avatar || '👤'}</span>
-        <div>
-          <div style="font-weight: 700; font-size: 0.95rem; color: #fff;">${u.name}</div>
-          <div style="font-size: 0.8rem; color: var(--text-muted);">${u.badge || u.company || u.role}</div>
-        </div>
-      </div>
-      <span class="status-pill ${u.role === 'client' ? 'pill-blue' : u.role === 'worker' ? 'pill-purple' : 'pill-green'}">${u.role.toUpperCase()}</span>
-    </div>
-  `).join('');
-}
-
-function selectUser(userId) {
-  const u = state.users.find(x => x.id === userId);
-  if (u) {
-    state.currentUser = u;
-    updateUserHeader();
-    renderAll();
-    closeModal('modal-auth');
-
-    // Auto navigate to relevant view
-    if (u.role === 'client') switchTab('client');
-    else if (u.role === 'worker') switchTab('worker');
-    else if (u.role === 'admin') switchTab('admin');
-  }
-}
-
-async function submitRegistration() {
-  const name = document.getElementById('reg-name').value;
-  const email = document.getElementById('reg-email').value;
-  const role = document.getElementById('reg-role').value;
-
-  if (!name || !email) {
-    alert('Please enter your full name and email.');
-    return;
-  }
-
-  const res = await API.post('/api/auth/register', { name, email, role });
-  if (res.success) {
-    state.users.push(res.user);
-    state.currentUser = res.user;
-    updateUserHeader();
-    renderAll();
-    closeModal('modal-auth');
-    if (role === 'worker') switchTab('worker');
-    else switchTab('client');
-  }
-}
-
-// 4. Services Grid
-function renderServices() {
-  const container = document.getElementById('services-grid-overview');
-  if (!container) return;
-
-  const icons = {
-    srv_support: '🎧',
-    srv_finance: '📊',
-    srv_ecommerce: '🛍️',
-    srv_revops: '🎯',
-    srv_aiqa: '🧠'
+const App = (function () {
+  // Private application state
+  const state = {
+    currentTab: 'projects',
+    selectedCategory: 'all',
+    selectedStatus: 'all',
+    searchQuery: '',
+    currentUser: null,
+    users: [],
+    services: [],
+    tasks: [],
+    sops: [],
+    discoveryRecords: [],
+    stats: {},
+    activeInspectTask: null
   };
 
-  container.innerHTML = state.services.map(s => `
-    <div class="glass-panel service-card">
-      <div>
-        <div class="service-header">
-          <span class="service-icon">${icons[s.id] || '⚡'}</span>
-          <span class="status-pill pill-blue">${s.category}</span>
-        </div>
-        <h3 class="service-title">${s.name}</h3>
-        <p class="service-desc">${s.description}</p>
-      </div>
+  // HTTP API Client
+  const http = {
+    async get(endpoint) {
+      try {
+        const res = await fetch(endpoint);
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return await res.json();
+      } catch (err) {
+        console.error(`[API GET] Failed to fetch ${endpoint}:`, err);
+        return null;
+      }
+    },
 
-      <div>
-        <div class="service-meta">
-          <span style="color: var(--text-dim);">Guaranteed SLA: <strong style="color: #fff;">${s.sla}</strong></span>
-          <span style="color: var(--text-dim);">Accuracy Target: <strong style="color: var(--accent-emerald);">${s.accuracyTarget}</strong></span>
-        </div>
-        <button class="btn btn-outline btn-sm" style="width: 100%;" onclick="openNewTaskModal('${s.id}')">Launch This Workflow →</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-// 5. Client Tasks
-function filterClientTasks(status, btn) {
-  document.querySelectorAll('#panel-client .filter-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderClientTasks(status);
-}
-
-function renderClientTasks(filter = 'all') {
-  const container = document.getElementById('client-tasks-container');
-  if (!container) return;
-
-  let tasks = state.tasks;
-  if (filter !== 'all') {
-    tasks = tasks.filter(t => t.status === filter);
-  }
-
-  // Update counts
-  const activeCountEl = document.getElementById('client-active-count');
-  const verifiedCountEl = document.getElementById('client-verified-count');
-  if (activeCountEl) activeCountEl.innerText = state.tasks.filter(t => t.status !== 'verified').length;
-  if (verifiedCountEl) verifiedCountEl.innerText = state.tasks.filter(t => t.status === 'verified').length;
-
-  if (tasks.length === 0) {
-    container.innerHTML = `
-      <div class="glass-panel" style="padding: 40px; text-align: center; color: var(--text-muted);">
-        <div style="font-size: 2.5rem; margin-bottom: 10px;">📋</div>
-        <div style="font-size: 1.1rem; font-weight: 600; color: #fff;">No tasks found for this filter</div>
-        <p style="margin-top: 6px;">Submit a new workflow batch to initiate AI processing and human QA.</p>
-      </div>
-    `;
-    return;
-  }
-
-  container.innerHTML = tasks.map(t => `
-    <div class="glass-panel task-card">
-      <div class="task-card-header">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <span class="task-id">${t.id}</span>
-          <span class="task-title">${t.title}</span>
-        </div>
-        <div>
-          ${getStatusPill(t.status)}
-        </div>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-        <div>
-          <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; margin-bottom: 4px;">Client Payload / Input</div>
-          <div class="task-summary-box">${escapeHtml(t.inputSummary)}</div>
-        </div>
-        <div>
-          <div style="font-size: 0.75rem; color: var(--primary); text-transform: uppercase; font-weight: 700; margin-bottom: 4px;">AI Pipeline & QA Resolution</div>
-          <div class="task-ai-box">
-            ${escapeHtml(t.operatorNotes || t.aiDraft)}
-          </div>
-        </div>
-      </div>
-
-      <div class="task-footer">
-        <div>
-          <span>Assigned Operator: <strong>${t.workerName || 'Awaiting Claim in Queue'}</strong></span>
-          ${t.turnaroundSeconds ? ` • <span>Turnaround: <strong style="color: var(--primary);">${Math.round(t.turnaroundSeconds / 60)} mins</strong></span>` : ''}
-          ${t.accuracyScore ? ` • <span>Verified Accuracy: <strong style="color: var(--accent-emerald);">${t.accuracyScore}%</strong></span>` : ''}
-        </div>
-        <div style="display: flex; gap: 8px;">
-          <button class="btn btn-outline btn-sm" onclick="inspectTaskLogs('${t.id}')">Audit Trail (${t.auditLog.length})</button>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-// 6. Worker Portal
-function renderWorkerTasks() {
-  const container = document.getElementById('worker-tasks-container');
-  if (!container) return;
-
-  const tasks = state.tasks;
-
-  container.innerHTML = tasks.map(t => {
-    const isClaimable = t.status === 'in_worker_review' && !t.workerName;
-    const isClaimedByMe = t.status === 'in_worker_review' && t.workerName;
-    const isCompleted = t.status === 'verified';
-
-    return `
-      <div class="glass-panel task-card" style="border-left: 4px solid ${isCompleted ? 'var(--accent-emerald)' : 'var(--primary)'};">
-        <div class="task-card-header">
-          <div>
-            <span class="task-id">${t.id}</span>
-            <span class="task-title" style="margin-left: 8px;">${t.title}</span>
-            <span style="font-size: 0.8rem; color: var(--text-dim); margin-left: 8px;">Client: ${t.clientName}</span>
-          </div>
-          <div>
-            ${getStatusPill(t.status)}
-          </div>
-        </div>
-
-        <div style="font-size: 0.88rem; color: #cbd5e1;">
-          <strong>Client Context:</strong> ${escapeHtml(t.inputSummary)}
-        </div>
-
-        <div class="task-ai-box" style="font-size: 0.85rem;">
-          <strong style="color: var(--primary);">Gemini AI Proposed Draft:</strong><br>
-          ${escapeHtml(t.aiDraft)}
-        </div>
-
-        <div class="task-footer">
-          <div>
-            Priority: <strong style="color: ${t.priority === 'Urgent' ? 'var(--accent-rose)' : '#fff'}">${t.priority}</strong>
-            • Created: ${new Date(t.createdAt).toLocaleTimeString()}
-          </div>
-          <div>
-            ${t.status === 'in_worker_review' ? `
-              <button class="btn btn-primary btn-sm" onclick="openWorkerWorkbench('${t.id}')">
-                🛠️ Open QA Verification Workbench
-              </button>
-            ` : `
-              <span style="color: var(--accent-emerald); font-weight: 600;">✔ Verified Compliant (${t.accuracyScore || 100}%)</span>
-            `}
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-function openWorkerWorkbench(taskId) {
-  const task = state.tasks.find(t => t.id === taskId);
-  if (!task) return;
-
-  state.currentInspectTask = task;
-  document.getElementById('modal-task-title').innerText = `${task.id}: ${task.title}`;
-  document.getElementById('modal-task-meta').innerText = `Client: ${task.clientName} | Priority: ${task.priority}`;
-  document.getElementById('modal-task-input').innerText = task.inputSummary;
-  document.getElementById('modal-task-aidraft').innerText = task.aiDraft;
-  document.getElementById('modal-operator-notes').value = task.operatorNotes || 'Confirmed compliance with SOP. Approved.';
-
-  openModal('modal-verify-task');
-}
-
-async function submitTaskAction(actionType) {
-  if (!state.currentInspectTask) return;
-
-  const notes = document.getElementById('modal-operator-notes').value;
-  const res = await API.post(`/api/tasks/${state.currentInspectTask.id}/verify`, {
-    actionType,
-    operatorNotes: notes,
-    accuracyScore: actionType === 'verify' ? 100 : undefined
-  });
-
-  if (res.success) {
-    // Update local state
-    const idx = state.tasks.findIndex(t => t.id === state.currentInspectTask.id);
-    if (idx !== -1) state.tasks[idx] = res.task;
-    closeModal('modal-verify-task');
-    renderAll();
-    alert(actionType === 'verify' ? 'Task verified and delivered with audit signature!' : 'Task escalated to Operations Lead.');
-  }
-}
-
-// 7. Operations CMS
-function renderSops() {
-  const container = document.getElementById('sops-grid');
-  if (!container) return;
-
-  container.innerHTML = state.sops.map(s => `
-    <div class="glass-panel" style="padding: 22px;">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-        <span class="status-pill pill-purple">${s.category}</span>
-        <span class="mono" style="font-size: 0.75rem; color: var(--primary);">v${s.version}</span>
-      </div>
-      <h4 style="font-size: 1.1rem; margin-bottom: 12px;">${s.title}</h4>
-      <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; color: #cbd5e1;">
-        ${s.rules.map(r => `<li style="display: flex; gap: 8px;"><span>⚡</span><span>${escapeHtml(r)}</span></li>`).join('')}
-      </ul>
-      <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border-color); font-size: 0.78rem; color: var(--text-dim);">
-        Last Modified: ${s.updatedAt}
-      </div>
-    </div>
-  `).join('');
-}
-
-function renderAdminTasks() {
-  const container = document.getElementById('admin-tasks-container');
-  if (!container) return;
-
-  container.innerHTML = `
-    <div class="glass-panel" style="overflow-x: auto;">
-      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
-        <thead>
-          <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
-            <th style="padding: 12px 16px;">Task ID</th>
-            <th style="padding: 12px 16px;">Title</th>
-            <th style="padding: 12px 16px;">Client</th>
-            <th style="padding: 12px 16px;">Operator</th>
-            <th style="padding: 12px 16px;">Status</th>
-            <th style="padding: 12px 16px;">Audit Trail</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${state.tasks.map(t => `
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
-              <td style="padding: 12px 16px;" class="mono"><strong style="color: var(--primary);">${t.id}</strong></td>
-              <td style="padding: 12px 16px;">${t.title}</td>
-              <td style="padding: 12px 16px; color: var(--text-muted);">${t.clientName}</td>
-              <td style="padding: 12px 16px;">${t.workerName || '<span style="color: var(--text-dim);">Unassigned</span>'}</td>
-              <td style="padding: 12px 16px;">${getStatusPill(t.status)}</td>
-              <td style="padding: 12px 16px;">
-                <button class="btn btn-outline btn-sm" onclick="inspectTaskLogs('${t.id}')">View Logs (${t.auditLog.length})</button>
-              </td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    </div>
-  `;
-}
-
-// 8. Discovery & ROI Calculator Logic
-function updateRange(id) {
-  const val = document.getElementById(`range-${id}`).value;
-  document.getElementById(`val-${id}`).innerText = val;
-}
-
-function calculatePainScore() {
-  const freq = parseInt(document.getElementById('range-freq')?.value || 4);
-  const pain = parseInt(document.getElementById('range-pain')?.value || 5);
-  const econ = parseInt(document.getElementById('range-econ')?.value || 4);
-  const meas = parseInt(document.getElementById('range-meas')?.value || 5);
-  const remote = parseInt(document.getElementById('range-remote')?.value || 5);
-  const ai = parseInt(document.getElementById('range-ai')?.value || 4);
-  const buyer = parseInt(document.getElementById('range-buyer')?.value || 4);
-  const urg = parseInt(document.getElementById('range-urg')?.value || 5);
-
-  const total = freq + pain + econ + meas + remote + ai + buyer + urg;
-  const cost = parseFloat(document.getElementById('calc-cost')?.value || 18000);
-
-  const scoreDisplay = document.getElementById('calc-score-display');
-  const badge = document.getElementById('calc-recommendation-badge');
-
-  if (scoreDisplay) {
-    scoreDisplay.innerHTML = `${total} <span style="font-size: 1.5rem; color: var(--text-dim);">/ 40</span>`;
-  }
-
-  if (badge) {
-    if (total >= 32) {
-      badge.className = "status-pill pill-green";
-      badge.innerText = "⭐ High Priority (32–40): Prime Pilot Candidate";
-      if (scoreDisplay) scoreDisplay.style.color = "#34d399";
-    } else if (total >= 24) {
-      badge.className = "status-pill pill-amber";
-      badge.innerText = "⚡ Investigate (24–31): Strong Potential with Custom SOP";
-      if (scoreDisplay) scoreDisplay.style.color = "#fbbf24";
-    } else {
-      badge.className = "status-pill pill-purple";
-      badge.innerText = "❄ Low Priority (< 24): Discovery evidence insufficient";
-      if (scoreDisplay) scoreDisplay.style.color = "#a78bfa";
+    async post(endpoint, payload) {
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        return await res.json();
+      } catch (err) {
+        console.error(`[API POST] Failed to post to ${endpoint}:`, err);
+        return { success: false, error: err.message };
+      }
     }
-  }
+  };
 
-  // Economics
-  const tfCost = Math.round(cost * 0.32);
-  const savings = Math.round(cost * 0.68);
-  const annualSavings = savings * 12;
-
-  const curEl = document.getElementById('disp-current-cost');
-  const tfEl = document.getElementById('disp-tf-cost');
-  const savEl = document.getElementById('disp-savings');
-  const annEl = document.getElementById('disp-annual-savings');
-
-  if (curEl) curEl.innerText = `$${cost.toLocaleString()} / mo`;
-  if (tfEl) tfEl.innerText = `$${tfCost.toLocaleString()} / mo`;
-  if (savEl) savEl.innerText = `$${savings.toLocaleString()} / mo (68%)`;
-  if (annEl) annEl.innerText = `$${annualSavings.toLocaleString()} / year`;
-}
-
-async function submitDiscoveryRecord() {
-  const company = document.getElementById('calc-company').value;
-  const industry = document.getElementById('calc-industry').value;
-  const workflow = document.getElementById('calc-workflow').value;
-  const monthlyCost = parseFloat(document.getElementById('calc-cost').value);
-  const hoursPerWeek = parseFloat(document.getElementById('calc-hours').value);
-
-  const freq = parseInt(document.getElementById('range-freq').value);
-  const pain = parseInt(document.getElementById('range-pain').value);
-  const econ = parseInt(document.getElementById('range-econ').value);
-  const meas = parseInt(document.getElementById('range-meas').value);
-  const remote = parseInt(document.getElementById('range-remote').value);
-  const ai = parseInt(document.getElementById('range-ai').value);
-  const buyer = parseInt(document.getElementById('range-buyer').value);
-  const urgency = parseInt(document.getElementById('range-urg').value);
-
-  const res = await API.post('/api/discovery/score', {
-    company, industry, workflow, monthlyCost, hoursPerWeek,
-    frequency: freq, pain, economicImpact: econ, measurability: meas,
-    remoteDeliverability: remote, aiSuitability: ai, buyerAccess: buyer, urgency
-  });
-
-  if (res.record) {
-    state.discoveryRecords.unshift(res.record);
-    renderDiscoveryRecords();
-    alert(`Discovery Record Saved for ${company}! Pain Score: ${res.painScore}/40.`);
-  }
-}
-
-function renderDiscoveryRecords() {
-  const container = document.getElementById('discovery-table-body');
-  if (!container) return;
-
-  container.innerHTML = state.discoveryRecords.map(r => `
-    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
-      <td style="padding: 12px 16px; font-weight: 600; color: #fff;">${r.company}</td>
-      <td style="padding: 12px 16px; color: var(--text-muted);">${r.industry}</td>
-      <td style="padding: 12px 16px;">${r.workflow}</td>
-      <td style="padding: 12px 16px;" class="mono"><strong style="color: var(--primary);">${r.painScore}/40</strong></td>
-      <td style="padding: 12px 16px;" class="mono">${r.currentCostMonthly}</td>
-      <td style="padding: 12px 16px;"><span class="status-pill pill-green">${r.recommendation ? r.recommendation.split('—')[0] : 'Saved'}</span></td>
-    </tr>
-  `).join('');
-}
-
-// 9. Modals & Task Submission
-function openModal(id) {
-  const el = document.getElementById(id);
-  if (el) el.classList.add('show');
-}
-
-function closeModal(id) {
-  const el = document.getElementById(id);
-  if (el) el.classList.remove('show');
-}
-
-function openNewTaskModal(serviceId) {
-  if (serviceId) {
-    const sel = document.getElementById('new-task-service');
-    if (sel) sel.value = serviceId;
-  }
-  openModal('modal-new-task');
-}
-
-async function submitNewTask() {
-  const serviceId = document.getElementById('new-task-service').value;
-  const title = document.getElementById('new-task-title').value;
-  const priority = document.getElementById('new-task-priority').value;
-  const inputSummary = document.getElementById('new-task-input').value;
-
-  if (!title) {
-    alert('Please enter a task title or reference.');
-    return;
-  }
-
-  const res = await API.post('/api/tasks', {
-    title,
-    serviceId,
-    priority,
-    inputSummary,
-    clientId: state.currentUser.id,
-    clientName: state.currentUser.company || state.currentUser.name
-  });
-
-  if (res.success) {
-    state.tasks.unshift(res.task);
-    closeModal('modal-new-task');
-    renderAll();
-    switchTab('client');
-    alert(`Task ${res.task.id} successfully queued for AI processing and human QA!`);
-  }
-}
-
-async function submitOnboardingTest() {
-  const q1 = document.querySelector('input[name="q1"]:checked')?.value;
-  const q2 = document.querySelector('input[name="q2"]:checked')?.value;
-  const q3 = document.querySelector('input[name="q3"]:checked')?.value;
-
-  if (!q1 || !q2 || !q3) {
-    alert('Please answer all 3 qualification questions.');
-    return;
-  }
-
-  const res = await API.post('/api/workers/onboard-test', {
-    workerId: state.currentUser.id,
-    answers: { q1, q2, q3 }
-  });
-
-  if (res.success) {
-    closeModal('modal-onboard-test');
-    alert(`Assessment Result: ${res.score}% (${res.passed ? 'PASSED' : 'RETAKE'})\n\n${res.feedback}`);
-    const u = state.users.find(x => x.id === state.currentUser.id);
-    if (u) {
-      u.badge = res.badge;
-      u.accuracy = res.score;
-    }
-    renderAll();
-  }
-}
-
-async function submitNewSop() {
-  const title = document.getElementById('sop-title').value;
-  const category = document.getElementById('sop-category').value;
-  const rawRules = document.getElementById('sop-rules').value;
-
-  if (!title || !category) {
-    alert('Please provide a title and category.');
-    return;
-  }
-
-  const rules = rawRules.split('\n').map(r => r.trim()).filter(Boolean);
-  const res = await API.post('/api/cms/sops', { title, category, rules });
-  if (res.success) {
-    state.sops.push(res.sop);
-    closeModal('modal-new-sop');
+  // Initialization
+  async function init() {
+    console.log('[TrainedForce] Initializing application...');
+    await loadInitialData();
+    renderUserNav();
+    renderProjectsFeed();
+    renderOperators();
     renderSops();
-    alert('SOP Blueprint created and published to operator knowledge base!');
+    calculateDiscoveryScore();
+    console.log('[TrainedForce] Ready.');
   }
-}
 
-function inspectTaskLogs(taskId) {
-  const task = state.tasks.find(t => t.id === taskId);
-  if (!task) return;
+  // Fetch all initial data concurrently
+  async function loadInitialData() {
+    const [stats, users, services, tasks, sops, discoveryRecords] = await Promise.all([
+      http.get('/api/stats'),
+      http.get('/api/auth/users'),
+      http.get('/api/services'),
+      http.get('/api/tasks'),
+      http.get('/api/cms/sops'),
+      http.get('/api/discovery/records')
+    ]);
 
-  let msg = `AUDIT TRAIL FOR [${task.id}]\n\n`;
-  task.auditLog.forEach(log => {
-    msg += `• [${new Date(log.time).toLocaleTimeString()}] ${log.action} (Actor: ${log.actor})\n`;
-  });
-  alert(msg);
-}
+    state.stats = stats || {};
+    state.users = users || [];
+    state.services = services || [];
+    state.tasks = tasks || [];
+    state.sops = sops || [];
+    state.discoveryRecords = discoveryRecords || [];
 
-// Helpers
-function getStatusPill(status) {
-  switch (status) {
-    case 'verified':
-      return `<span class="status-pill pill-green"><span class="pulse-dot"></span> Verified</span>`;
-    case 'in_worker_review':
-      return `<span class="status-pill pill-purple"><span class="pulse-dot"></span> In QA Review</span>`;
-    case 'ai_processing':
-      return `<span class="status-pill pill-blue"><span class="pulse-dot"></span> AI Ingesting</span>`;
-    case 'escalated':
-      return `<span class="status-pill pill-amber">⚠ Escalated</span>`;
-    default:
-      return `<span class="status-pill pill-blue">${status}</span>`;
+    // Default to client persona (Sarah) if available
+    state.currentUser = state.users[1] || state.users[0] || {
+      id: 'usr_default',
+      name: 'Sarah Jenkins',
+      role: 'client',
+      company: 'Acuity Health SaaS',
+      avatar: '💼'
+    };
   }
-}
 
-function escapeHtml(str) {
-  if (!str) return '';
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-}
+  // Tab & View Navigation
+  function navigateTo(tabId) {
+    state.currentTab = tabId;
+
+    // Update Header Navigation Links
+    document.querySelectorAll('.fl-nav-link').forEach(btn => btn.classList.remove('active'));
+    const activeLink = document.getElementById(`nav-${tabId}`);
+    if (activeLink) activeLink.classList.add('active');
+
+    // Show / Hide Views
+    document.querySelectorAll('.tab-view').forEach(view => {
+      view.style.display = 'none';
+    });
+
+    const targetView = document.getElementById(`view-${tabId}`);
+    if (targetView) {
+      targetView.style.display = 'block';
+    }
+
+    // Toggle hero banner visibility for sub-pages if desired
+    const hero = document.getElementById('hero-banner');
+    if (hero) {
+      hero.style.display = tabId === 'projects' ? 'block' : 'none';
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Category Filtering
+  function filterCategory(catId, element) {
+    state.selectedCategory = catId;
+    document.querySelectorAll('.fl-subnav-item').forEach(item => item.classList.remove('active'));
+    if (element) element.classList.add('active');
+    renderProjectsFeed();
+  }
+
+  function filterStatus(status) {
+    state.selectedStatus = status;
+    renderProjectsFeed();
+  }
+
+  function handleSearch(query) {
+    state.searchQuery = (query || '').toLowerCase().trim();
+    renderProjectsFeed();
+  }
+
+  function applyFilters() {
+    renderProjectsFeed();
+  }
+
+  function sortProjects(sortKey) {
+    if (sortKey === 'newest') {
+      state.tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else if (sortKey === 'priority') {
+      const priorityOrder = { 'Urgent': 3, 'High': 2, 'Normal': 1 };
+      state.tasks.sort((a, b) => (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0));
+    } else if (sortKey === 'accuracy') {
+      state.tasks.sort((a, b) => (b.accuracyScore || 0) - (a.accuracyScore || 0));
+    }
+    renderProjectsFeed();
+  }
+
+  // Render Projects Feed (Freelancer.com Card Layout)
+  function renderProjectsFeed() {
+    const container = document.getElementById('projects-feed-container');
+    if (!container) return;
+
+    let filtered = state.tasks;
+
+    // Filter by category
+    if (state.selectedCategory !== 'all') {
+      filtered = filtered.filter(t => t.serviceId === state.selectedCategory);
+    }
+
+    // Filter by status
+    if (state.selectedStatus !== 'all') {
+      filtered = filtered.filter(t => t.status === state.selectedStatus);
+    }
+
+    // Filter by search query
+    if (state.searchQuery) {
+      filtered = filtered.filter(t =>
+        t.title.toLowerCase().includes(state.searchQuery) ||
+        t.inputSummary.toLowerCase().includes(state.searchQuery) ||
+        t.clientName.toLowerCase().includes(state.searchQuery)
+      );
+    }
+
+    // Update count badge
+    const countBadge = document.getElementById('project-count-badge');
+    if (countBadge) countBadge.innerText = filtered.length;
+
+    if (filtered.length === 0) {
+      container.innerHTML = `
+        <div class="card" style="padding: 40px; text-align: center; color: var(--text-muted);">
+          <div style="font-size: 2.2rem; margin-bottom: 8px;">📋</div>
+          <h4 style="color: var(--text-primary);">No active projects found</h4>
+          <p style="margin-top: 4px; font-size: 0.9rem;">Try selecting a different filter or post a new workflow project.</p>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = filtered.map(t => {
+      const isVerified = t.status === 'verified';
+      const isUrgent = t.priority === 'Urgent';
+      const timeAgo = formatTimeAgo(t.createdAt);
+
+      return `
+        <article class="project-card">
+          <div class="project-card-top">
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                ${isUrgent ? '<span class="badge badge-urgent">🔥 Urgent SLA</span>' : ''}
+                ${isVerified ? '<span class="badge badge-verified">✔ Verified QA Pass</span>' : '<span class="badge badge-blue">⚡ In QA Review</span>'}
+                <span class="badge badge-pro">${t.serviceId.replace('srv_', '').toUpperCase()}</span>
+                <span class="mono" style="font-size: 0.78rem; color: var(--text-light);">${t.id}</span>
+              </div>
+              <h3 class="project-title" onclick="App.openTaskQA('${t.id}')">${escapeHtml(t.title)}</h3>
+              <div class="project-meta-row">
+                <span>Posted ${timeAgo}</span>
+                <span>•</span>
+                <span>Client: <strong>${escapeHtml(t.clientName)}</strong></span>
+                <span>•</span>
+                <span>Assigned QA: <strong>${t.workerName || 'Open in Squad Queue'}</strong></span>
+              </div>
+            </div>
+
+            <div class="project-budget-box">
+              <div class="project-budget-val">$250 - $750</div>
+              <div class="project-budget-type">Fixed Price Batch</div>
+            </div>
+          </div>
+
+          <div class="project-desc">
+            ${escapeHtml(t.inputSummary)}
+          </div>
+
+          <div class="project-ai-context">
+            <strong>🤖 Gemini Pipeline Inference:</strong> ${escapeHtml(t.operatorNotes || t.aiDraft)}
+          </div>
+
+          <div class="project-tags-row">
+            <span class="project-tag">#human-in-the-loop</span>
+            <span class="project-tag">#gemini-2.5-qa</span>
+            <span class="project-tag">#sop-adherence</span>
+            <span class="project-tag">#sla-guarantee</span>
+          </div>
+
+          <div class="project-footer">
+            <div class="client-rating-badge">
+              <span class="star-rating">★★★★★</span>
+              <span><strong>5.0</strong> (48 reviews)</span>
+              <span style="margin-left: 8px; color: var(--fl-emerald); font-weight: 600;">✔ Payment & SOP Verified</span>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+              ${t.status === 'verified' ? `
+                <button class="btn btn-outline btn-sm" onclick="App.inspectAuditTrail('${t.id}')">View Audit Trail (${t.auditLog.length})</button>
+              ` : `
+                <button class="btn btn-primary btn-sm" onclick="App.openTaskQA('${t.id}')">
+                  🛠️ Open QA Workbench
+                </button>
+              `}
+            </div>
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  // Render Operators / Freelancers Directory
+  function renderOperators() {
+    const container = document.getElementById('operators-grid-container');
+    if (!container) return;
+
+    const operators = [
+      {
+        name: "Bilal Tariq",
+        location: "Lahore, Pakistan 🇵🇰",
+        title: "Lead AI Knowledge Work Specialist & Finance QA",
+        avatar: "⚡",
+        rate: "$14 / hr",
+        jss: "99.8%",
+        tasks: "3,410",
+        rating: "5.0",
+        reviews: 214,
+        badges: ["Top Rated", "HIPAA Certified", "Gemini Master"],
+        skills: ["PO Reconciliation", "ERP Audit", "Exception Triage", "Tax Rules"]
+      },
+      {
+        name: "Fatima Noor",
+        location: "Karachi, Pakistan 🇵🇰",
+        title: "Senior AI Customer Support & Content Moderation Lead",
+        avatar: "🌟",
+        rate: "$12 / hr",
+        jss: "99.9%",
+        tasks: "4,890",
+        rating: "5.0",
+        reviews: 320,
+        badges: ["Preferred Freelancer", "Zendesk Expert", "Tier-2 QA"],
+        skills: ["Customer Empathy", "Refund Policy Triage", "Tone Calibration", "SLA Escalations"]
+      },
+      {
+        name: "Usman Raza",
+        location: "Islamabad, Pakistan 🇵🇰",
+        title: "E-Commerce Catalog Taxonomy & LLM RLHF Specialist",
+        avatar: "🚀",
+        rate: "$15 / hr",
+        jss: "99.5%",
+        tasks: "2,150",
+        rating: "4.9",
+        reviews: 142,
+        badges: ["Top Rated", "Google Merchant Pro", "RLHF Lead"],
+        skills: ["SKU Attribute Tagging", "Multilingual QA", "Hallucination Check", "CSV Pipelines"]
+      }
+    ];
+
+    container.innerHTML = operators.map(op => `
+      <div class="operator-card">
+        <div>
+          <div class="operator-header">
+            <div class="operator-avatar-big">${op.avatar}</div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <h4 class="operator-name">${op.name}</h4>
+                <span class="badge badge-verified">VERIFIED</span>
+              </div>
+              <div class="operator-title">${op.title}</div>
+              <div style="font-size: 0.8rem; color: var(--text-light); margin-top: 2px;">📍 ${op.location}</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;">
+            ${op.badges.map(b => `<span class="badge badge-featured">${b}</span>`).join('')}
+          </div>
+
+          <div class="operator-metrics-row">
+            <div>
+              <div class="operator-metric-val" style="color: var(--fl-emerald);">${op.jss}</div>
+              <div class="operator-metric-lbl">Job Success</div>
+            </div>
+            <div>
+              <div class="operator-metric-val">${op.tasks}</div>
+              <div class="operator-metric-lbl">Tasks Done</div>
+            </div>
+            <div>
+              <div class="operator-metric-val" style="color: var(--fl-blue);">${op.rate}</div>
+              <div class="operator-metric-lbl">Hourly / SLA</div>
+            </div>
+          </div>
+
+          <div class="project-tags-row">
+            ${op.skills.map(s => `<span class="project-tag">${s}</span>`).join('')}
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+          <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="alert('Viewing verified credentials for ${op.name}')">View Profile</button>
+          <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="App.openPostProjectModal()">Invite to Project</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Render SOPs (Internal CMS)
+  function renderSops() {
+    const container = document.getElementById('sops-grid-container');
+    if (!container) return;
+
+    container.innerHTML = state.sops.map(s => `
+      <div class="card" style="padding: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+          <span class="badge badge-pro">${s.category}</span>
+          <span class="mono" style="font-size: 0.75rem; color: var(--fl-blue); font-weight: 700;">v${s.version}</span>
+        </div>
+        <h4 style="font-size: 1.1rem; margin-bottom: 12px; color: var(--fl-dark-blue);">${s.title}</h4>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 0.86rem; color: var(--text-secondary);">
+          ${s.rules.map(r => `<li style="display: flex; gap: 8px;"><span style="color: var(--fl-blue);">•</span><span>${escapeHtml(r)}</span></li>`).join('')}
+        </ul>
+        <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border-light); font-size: 0.78rem; color: var(--text-light);">
+          Last updated: ${s.updatedAt}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Navigation user profile display
+  function renderUserNav() {
+    const nameEl = document.getElementById('nav-user-name');
+    const roleEl = document.getElementById('nav-user-role');
+    const avatarEl = document.getElementById('nav-user-avatar');
+
+    if (state.currentUser) {
+      if (nameEl) nameEl.innerText = state.currentUser.name;
+      if (roleEl) roleEl.innerText = state.currentUser.badge || (state.currentUser.role === 'client' ? 'Enterprise Client' : 'AI Operator');
+      if (avatarEl) avatarEl.innerText = state.currentUser.avatar || '👤';
+    }
+
+    renderUserModalList();
+  }
+
+  function renderUserModalList() {
+    const container = document.getElementById('auth-users-list');
+    if (!container) return;
+
+    container.innerHTML = state.users.map(u => `
+      <div class="card" style="padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-color: ${state.currentUser.id === u.id ? 'var(--fl-blue)' : 'var(--border-light)'}" onclick="App.switchUser('${u.id}')">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 1.3rem;">${u.avatar || '👤'}</span>
+          <div>
+            <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-primary);">${u.name}</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">${u.company || u.badge || u.role}</div>
+          </div>
+        </div>
+        <span class="badge ${u.role === 'client' ? 'badge-blue' : 'badge-verified'}">${u.role.toUpperCase()}</span>
+      </div>
+    `).join('');
+  }
+
+  function switchUser(userId) {
+    const u = state.users.find(x => x.id === userId);
+    if (u) {
+      state.currentUser = u;
+      renderUserNav();
+      closeModal('modal-auth');
+      renderProjectsFeed();
+    }
+  }
+
+  async function registerUser() {
+    const name = document.getElementById('reg-name').value;
+    const email = document.getElementById('reg-email').value;
+    const role = document.getElementById('reg-role').value;
+
+    if (!name || !email) {
+      alert('Please fill out your name and email.');
+      return;
+    }
+
+    const res = await http.post('/api/auth/register', { name, email, role });
+    if (res.success) {
+      state.users.push(res.user);
+      state.currentUser = res.user;
+      renderUserNav();
+      closeModal('modal-auth');
+      alert(`Welcome, ${res.user.name}! Account registered successfully.`);
+    }
+  }
+
+  // Modals
+  function openModal(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('active');
+  }
+
+  function closeModal(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  }
+
+  function openPostProjectModal() {
+    openModal('modal-post-project');
+  }
+
+  async function submitPostProject() {
+    const serviceId = document.getElementById('post-service-id').value;
+    const title = document.getElementById('post-title').value;
+    const priority = document.getElementById('post-priority').value;
+    const payload = document.getElementById('post-payload').value;
+
+    if (!title) {
+      alert('Please enter a project title.');
+      return;
+    }
+
+    const res = await http.post('/api/tasks', {
+      title,
+      serviceId,
+      priority,
+      inputSummary: payload,
+      clientId: state.currentUser.id,
+      clientName: state.currentUser.company || state.currentUser.name
+    });
+
+    if (res.success) {
+      state.tasks.unshift(res.task);
+      closeModal('modal-post-project');
+      renderProjectsFeed();
+      alert(`Project "${res.task.id}" created and dispatched to the verification pipeline!`);
+    }
+  }
+
+  // Task QA Drawer
+  function openTaskQA(taskId) {
+    const task = state.tasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    state.activeInspectTask = task;
+    document.getElementById('qa-task-title').innerText = `${task.id}: ${task.title}`;
+    document.getElementById('qa-task-meta').innerText = `Client: ${task.clientName} | Priority: ${task.priority} | Created: ${new Date(task.createdAt).toLocaleString()}`;
+    document.getElementById('qa-task-input').innerText = task.inputSummary;
+    document.getElementById('qa-task-aidraft').innerText = task.aiDraft;
+    document.getElementById('qa-operator-notes').value = task.operatorNotes || 'Confirmed PO & Invoice reconciliation compliant with SOP v3.2. Approved.';
+
+    openModal('modal-qa-task');
+  }
+
+  async function submitTaskQA(actionType) {
+    if (!state.activeInspectTask) return;
+
+    const notes = document.getElementById('qa-operator-notes').value;
+    const res = await http.post(`/api/tasks/${state.activeInspectTask.id}/verify`, {
+      actionType,
+      operatorNotes: notes,
+      accuracyScore: actionType === 'verify' ? 100 : undefined
+    });
+
+    if (res.success) {
+      const idx = state.tasks.findIndex(t => t.id === state.activeInspectTask.id);
+      if (idx !== -1) state.tasks[idx] = res.task;
+      closeModal('modal-qa-task');
+      renderProjectsFeed();
+      alert(actionType === 'verify' ? 'Task QA passed and verified deliverables sent to client!' : 'Task escalated to Operations Lead for review.');
+    }
+  }
+
+  function inspectAuditTrail(taskId) {
+    const task = state.tasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    let msg = `CRYPTOGRAPHIC AUDIT TRAIL FOR [${task.id}]\n\n`;
+    task.auditLog.forEach(log => {
+      msg += `• [${new Date(log.time).toLocaleTimeString()}] ${log.action} (Actor: ${log.actor})\n`;
+    });
+    alert(msg);
+  }
+
+  // Operator Certification Exam
+  async function submitOnboardingTest() {
+    const q1 = document.querySelector('input[name="test-q1"]:checked')?.value;
+    const q2 = document.querySelector('input[name="test-q2"]:checked')?.value;
+    const q3 = document.querySelector('input[name="test-q3"]:checked')?.value;
+
+    if (!q1 || !q2 || !q3) {
+      alert('Please answer all 3 qualification questions.');
+      return;
+    }
+
+    const res = await http.post('/api/workers/onboard-test', {
+      workerId: state.currentUser.id,
+      answers: { q1, q2, q3 }
+    });
+
+    if (res.success) {
+      closeModal('modal-onboard-test');
+      alert(`Score: ${res.score}% (${res.passed ? 'PASSED' : 'RETAKE'})\n\n${res.feedback}`);
+      const u = state.users.find(x => x.id === state.currentUser.id);
+      if (u) {
+        u.badge = res.badge;
+      }
+      renderUserNav();
+    }
+  }
+
+  // Discovery & ROI Calculator
+  function updateRangeDisplay(id) {
+    const val = document.getElementById(`range-${id}`).value;
+    const el = document.getElementById(`val-${id}`);
+    if (el) el.innerText = val;
+  }
+
+  function calculateDiscoveryScore() {
+    const f = parseInt(document.getElementById('range-f')?.value || 4);
+    const p = parseInt(document.getElementById('range-p')?.value || 5);
+    const e = parseInt(document.getElementById('range-e')?.value || 4);
+    const m = parseInt(document.getElementById('range-m')?.value || 5);
+    const r = parseInt(document.getElementById('range-r')?.value || 5);
+    const a = parseInt(document.getElementById('range-a')?.value || 4);
+    const b = parseInt(document.getElementById('range-b')?.value || 4);
+    const u = parseInt(document.getElementById('range-u')?.value || 5);
+
+    const total = f + p + e + m + r + a + b + u;
+    const cost = parseFloat(document.getElementById('calc-cost-input')?.value || 16500);
+
+    const scoreDisplay = document.getElementById('display-score-num');
+    const badge = document.getElementById('display-score-badge');
+
+    if (scoreDisplay) scoreDisplay.innerText = `${total} / 40`;
+
+    if (badge) {
+      if (total >= 32) {
+        badge.className = "badge badge-verified";
+        badge.innerText = "⭐ High Priority: Prime Pilot Candidate";
+      } else if (total >= 24) {
+        badge.className = "badge badge-featured";
+        badge.innerText = "⚡ Investigate: Strong Potential with Custom SOP";
+      } else {
+        badge.className = "badge badge-pro";
+        badge.innerText = "❄ Low Priority (< 24): Insufficient Discovery Evidence";
+      }
+    }
+
+    const tfCost = Math.round(cost * 0.32);
+    const savings = Math.round(cost * 0.68);
+    const annualSavings = savings * 12;
+
+    const curEl = document.getElementById('eco-current');
+    const tfEl = document.getElementById('eco-tf');
+    const savEl = document.getElementById('eco-savings');
+    const annEl = document.getElementById('eco-annual');
+
+    if (curEl) curEl.innerText = `$${cost.toLocaleString()} / mo`;
+    if (tfEl) tfEl.innerText = `$${tfCost.toLocaleString()} / mo`;
+    if (savEl) savEl.innerText = `$${savings.toLocaleString()} / mo (68%)`;
+    if (annEl) annEl.innerText = `$${annualSavings.toLocaleString()} / year`;
+  }
+
+  async function saveDiscoveryRecord() {
+    const company = document.getElementById('calc-company-input').value;
+    const industry = document.getElementById('calc-industry-input').value;
+    const workflow = document.getElementById('calc-workflow-input').value;
+    const monthlyCost = parseFloat(document.getElementById('calc-cost-input').value);
+    const hoursPerWeek = parseFloat(document.getElementById('calc-hours-input').value);
+
+    const res = await http.post('/api/discovery/score', {
+      company, industry, workflow, monthlyCost, hoursPerWeek
+    });
+
+    if (res.record) {
+      state.discoveryRecords.unshift(res.record);
+      alert(`Discovery record saved for ${company}! Pain score: ${res.painScore}/40.`);
+    }
+  }
+
+  async function submitNewSop() {
+    const title = document.getElementById('sop-title-input').value;
+    const category = document.getElementById('sop-category-input').value;
+    const rawRules = document.getElementById('sop-rules-input').value;
+
+    if (!title || !category) {
+      alert('Please fill out the SOP title and category.');
+      return;
+    }
+
+    const rules = rawRules.split('\n').map(r => r.trim()).filter(Boolean);
+    const res = await http.post('/api/cms/sops', { title, category, rules });
+    if (res.success) {
+      state.sops.push(res.sop);
+      closeModal('modal-new-sop');
+      renderSops();
+      alert('SOP Blueprint published successfully!');
+    }
+  }
+
+  // Utilities
+  function formatTimeAgo(dateStr) {
+    const seconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
+    if (seconds < 60) return 'just now';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    return `${Math.floor(hours / 24)}d ago`;
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  // Public Interface
+  return {
+    init,
+    navigateTo,
+    filterCategory,
+    filterStatus,
+    handleSearch,
+    applyFilters,
+    sortProjects,
+    openModal,
+    closeModal,
+    openPostProjectModal,
+    submitPostProject,
+    openTaskQA,
+    submitTaskQA,
+    inspectAuditTrail,
+    switchUser,
+    registerUser,
+    submitOnboardingTest,
+    updateRangeDisplay,
+    calculateDiscoveryScore,
+    saveDiscoveryRecord,
+    submitNewSop
+  };
+})();
+
+// Bootstrap on DOM load
+document.addEventListener('DOMContentLoaded', App.init);
