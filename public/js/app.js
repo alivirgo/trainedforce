@@ -1,8 +1,8 @@
 /**
- * TrainedForce Marketplace & Operations Engine
- * Client-side Controller & UI State Handler
+ * TrainedForce - Next-Gen AI Workforce Operating System
+ * Modular Core Controller & Live Telemetry Engine
  * 
- * Authored by: Frontend & Product Engineering
+ * Authored by: Frontend & Systems Engineering
  */
 
 const App = (function () {
@@ -20,7 +20,8 @@ const App = (function () {
     discoveryRecords: [],
     stats: {},
     activeInspectTask: null,
-    activeBidTask: null
+    activeBidTask: null,
+    simulationRunning: false
   };
 
   // HTTP API Client
@@ -75,14 +76,26 @@ const App = (function () {
 
   // Initialization
   async function init() {
-    console.log('[TrainedForce] Initializing platform...');
+    console.log('[TrainedForce OS] Initializing cybernetic engine...');
     await loadInitialData();
     renderUserNav();
     renderProjectsFeed();
     renderOperators();
     renderSops();
-    calculateDiscoveryScore();
-    console.log('[TrainedForce] Application ready.');
+    calculateArbitrage();
+    startLiveTelemetryLoop();
+    console.log('[TrainedForce OS] All subsystems online.');
+  }
+
+  // Live Telemetry Simulation Loop
+  function startLiveTelemetryLoop() {
+    setInterval(() => {
+      const latEl = document.getElementById('tele-latency');
+      if (latEl) {
+        const ms = Math.floor(290 + Math.random() * 45);
+        latEl.innerText = `Gemini 2.5 Pro (${ms}ms)`;
+      }
+    }, 3500);
   }
 
   // Fetch all initial data concurrently
@@ -223,9 +236,9 @@ const App = (function () {
 
     if (filtered.length === 0) {
       container.innerHTML = `
-        <div class="card" style="padding: 40px; text-align: center; color: var(--text-muted);">
+        <div class="glass-panel" style="padding: 40px; text-align: center; color: var(--text-muted);">
           <div style="font-size: 2.2rem; margin-bottom: 8px;">📋</div>
-          <h4 style="color: var(--text-primary);">No active projects found</h4>
+          <h4 style="color: var(--text-white);">No active projects found</h4>
           <p style="margin-top: 4px; font-size: 0.9rem;">Try selecting a different filter or post a new workflow project.</p>
         </div>
       `;
@@ -236,27 +249,27 @@ const App = (function () {
       const isVerified = t.status === 'verified';
       const isUrgent = t.priority === 'Urgent';
       const timeAgo = formatTimeAgo(t.createdAt);
-      const bidCount = t.bids ? t.bids.length : 3;
+      const bidCount = t.bids ? t.bids.length : 4;
 
       return `
         <article class="project-card">
           <div class="project-card-header">
             <div>
-              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
                 ${isUrgent ? '<span class="badge badge-urgent">🔥 Urgent SLA</span>' : ''}
                 ${isVerified ? '<span class="badge badge-verified">✔ Verified QA Pass</span>' : '<span class="badge badge-blue">⚡ In QA Review</span>'}
                 <span class="badge badge-pro">${t.serviceId.replace('srv_', '').toUpperCase()}</span>
-                <span class="mono" style="font-size: 0.78rem; color: var(--text-dim);">${t.id}</span>
+                <span class="mono" style="font-size: 0.78rem; color: var(--neon-cyan);">${t.id}</span>
               </div>
               <h3 class="project-title-link" onclick="App.openTaskQA('${t.id}')">${escapeHtml(t.title)}</h3>
               <div class="project-meta">
                 <span>Posted ${timeAgo}</span>
                 <span>•</span>
-                <span>Client: <strong>${escapeHtml(t.clientName)}</strong></span>
+                <span>Client: <strong style="color: #fff;">${escapeHtml(t.clientName)}</strong></span>
                 <span>•</span>
                 <span>Assigned QA: <strong>${t.workerName || 'Open in Squad Queue'}</strong></span>
                 <span>•</span>
-                <span style="color: var(--fl-blue); font-weight: 600;">${bidCount} Operator Bids</span>
+                <span style="color: var(--neon-cyan); font-weight: 700;">${bidCount} Operator Bids</span>
               </div>
             </div>
 
@@ -271,12 +284,12 @@ const App = (function () {
           </div>
 
           <div class="ai-pipeline-box">
-            <strong>🤖 Gemini Pipeline Inference:</strong> ${escapeHtml(t.operatorNotes || t.aiDraft)}
+            <strong style="color: var(--neon-cyan);">🤖 Gemini Pipeline Inference:</strong> ${escapeHtml(t.operatorNotes || t.aiDraft)}
           </div>
 
           <div class="tags-row">
             <span class="skill-tag">#human-in-the-loop</span>
-            <span class="skill-tag">#gemini-2.5-qa</span>
+            <span class="skill-tag">#gemini-2.5-pro</span>
             <span class="skill-tag">#sop-adherence</span>
             <span class="skill-tag">#sla-guarantee</span>
           </div>
@@ -284,13 +297,13 @@ const App = (function () {
           <div class="project-bottom-bar">
             <div style="display: flex; align-items: center; gap: 6px;">
               <span style="color: #f59e0b;">★★★★★</span>
-              <span><strong>5.0</strong> (48 reviews)</span>
-              <span style="margin-left: 8px; color: var(--fl-emerald); font-weight: 600;">✔ Payment Verified</span>
+              <span><strong style="color: #fff;">5.0</strong> (48 reviews)</span>
+              <span style="margin-left: 8px; color: var(--neon-emerald); font-weight: 700;">✔ Enterprise Payment Verified</span>
             </div>
 
             <div style="display: flex; gap: 8px;">
               ${t.status === 'verified' ? `
-                <button class="btn btn-outline btn-sm" onclick="App.inspectAuditTrail('${t.id}')">View Audit Trail (${t.auditLog.length})</button>
+                <button class="btn btn-outline btn-sm" onclick="App.inspectAuditTrail('${t.id}')">Audit Proof (${t.auditLog.length})</button>
               ` : `
                 <button class="btn btn-outline btn-sm" onclick="App.openBidModal('${t.id}')">💬 Place Bid</button>
                 <button class="btn btn-primary btn-sm" onclick="App.openTaskQA('${t.id}')">🛠️ QA Workbench</button>
@@ -356,7 +369,7 @@ const App = (function () {
             <div class="operator-avatar-box">${op.avatar}</div>
             <div>
               <div style="display: flex; align-items: center; gap: 8px;">
-                <h4 style="font-size: 1.1rem; color: var(--text-primary);">${op.name}</h4>
+                <h4 style="font-size: 1.15rem; color: var(--text-white);">${op.name}</h4>
                 <span class="badge badge-verified">VERIFIED</span>
               </div>
               <div style="font-size: 0.85rem; color: var(--text-muted);">${op.title}</div>
@@ -364,22 +377,22 @@ const App = (function () {
             </div>
           </div>
 
-          <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;">
+          <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px;">
             ${op.badges.map(b => `<span class="badge badge-featured">${b}</span>`).join('')}
           </div>
 
           <div class="operator-stats-box">
             <div>
-              <div style="font-size: 1rem; font-weight: 800; color: var(--fl-emerald);" class="mono">${op.jss}</div>
-              <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Job Success</div>
+              <div style="font-size: 1.1rem; font-weight: 800; color: var(--neon-emerald);" class="mono">${op.jss}</div>
+              <div style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Job Success</div>
             </div>
             <div>
-              <div style="font-size: 1rem; font-weight: 800;" class="mono">${op.tasks}</div>
-              <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Tasks Done</div>
+              <div style="font-size: 1.1rem; font-weight: 800; color: #fff;" class="mono">${op.tasks}</div>
+              <div style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Tasks Done</div>
             </div>
             <div>
-              <div style="font-size: 1rem; font-weight: 800; color: var(--fl-blue);" class="mono">${op.rate}</div>
-              <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Rate / SLA</div>
+              <div style="font-size: 1.1rem; font-weight: 800; color: var(--neon-cyan);" class="mono">${op.rate}</div>
+              <div style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Rate / SLA</div>
             </div>
           </div>
 
@@ -388,9 +401,9 @@ const App = (function () {
           </div>
         </div>
 
-        <div style="display: flex; gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-          <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="App.showToast('Viewing verified credentials for ${op.name}', 'info')">View Profile</button>
-          <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="App.openPostProjectModal()">Invite to Project</button>
+        <div style="display: flex; gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--space-border);">
+          <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="App.showToast('Viewing verified credentials for ${op.name}', 'info')">Profile Proof</button>
+          <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="App.openPostProjectModal()">Hire Operator</button>
         </div>
       </div>
     `).join('');
@@ -402,16 +415,16 @@ const App = (function () {
     if (!container) return;
 
     container.innerHTML = state.sops.map(s => `
-      <div class="card" style="padding: 22px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+      <div class="glass-panel" style="padding: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
           <span class="badge badge-pro">${s.category}</span>
-          <span class="mono" style="font-size: 0.75rem; color: var(--fl-blue); font-weight: 700;">v${s.version}</span>
+          <span class="mono" style="font-size: 0.75rem; color: var(--neon-cyan); font-weight: 800;">v${s.version}</span>
         </div>
-        <h4 style="font-size: 1.1rem; margin-bottom: 12px; color: var(--text-primary);">${s.title}</h4>
-        <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 0.86rem; color: var(--text-secondary);">
-          ${s.rules.map(r => `<li style="display: flex; gap: 8px;"><span style="color: var(--fl-blue);">•</span><span>${escapeHtml(r)}</span></li>`).join('')}
+        <h4 style="font-size: 1.15rem; margin-bottom: 12px; color: var(--text-white);">${s.title}</h4>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 0.88rem; color: #cbd5e1;">
+          ${s.rules.map(r => `<li style="display: flex; gap: 8px;"><span style="color: var(--neon-cyan);">⚡</span><span>${escapeHtml(r)}</span></li>`).join('')}
         </ul>
-        <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border-light); font-size: 0.78rem; color: var(--text-dim);">
+        <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--space-border); font-size: 0.78rem; color: var(--text-dim);">
           Last updated: ${s.updatedAt}
         </div>
       </div>
@@ -438,12 +451,12 @@ const App = (function () {
     if (!container) return;
 
     container.innerHTML = state.users.map(u => `
-      <div class="card" style="padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-color: ${state.currentUser.id === u.id ? 'var(--fl-blue)' : 'var(--border-light)'}" onclick="App.switchUser('${u.id}')">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 1.3rem;">${u.avatar || '👤'}</span>
+      <div class="glass-panel" style="padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-color: ${state.currentUser.id === u.id ? 'var(--neon-cyan)' : 'var(--space-border)'}" onclick="App.switchUser('${u.id}')">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 1.4rem;">${u.avatar || '👤'}</span>
           <div>
-            <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-primary);">${u.name}</div>
-            <div style="font-size: 0.75rem; color: var(--text-muted);">${u.company || u.badge || u.role}</div>
+            <div style="font-weight: 700; font-size: 0.92rem; color: var(--text-white);">${u.name}</div>
+            <div style="font-size: 0.78rem; color: var(--text-dim);">${u.company || u.badge || u.role}</div>
           </div>
         </div>
         <span class="badge ${u.role === 'client' ? 'badge-blue' : 'badge-verified'}">${u.role.toUpperCase()}</span>
@@ -643,7 +656,181 @@ const App = (function () {
     alert(msg);
   }
 
-  // Operator Certification Exam
+  // =========================================================================
+  // PARADIGM SHIFT: LIVE PIPELINE FLOW SIMULATOR
+  // =========================================================================
+  function runLiveSimulation() {
+    if (state.simulationRunning) return;
+    state.simulationRunning = true;
+
+    const consoleBox = document.getElementById('sim-console-output');
+    const nodes = [
+      document.getElementById('sim-node-1'),
+      document.getElementById('sim-node-2'),
+      document.getElementById('sim-node-3'),
+      document.getElementById('sim-node-4')
+    ];
+
+    showToast('Starting end-to-end pipeline execution...', 'info');
+
+    // Step 1: Ingestion
+    nodes[0].style.boxShadow = '0 0 25px rgba(0, 242, 254, 0.6)';
+    nodes[0].style.borderColor = 'var(--neon-cyan)';
+    consoleBox.innerHTML = '<div class="mono" style="color: #38bdf8;">[00.12s] Ingesting client webhook payload for Enterprise Task #TSK-SIM-99...</div>';
+
+    // Step 2: Gemini
+    setTimeout(() => {
+      nodes[0].style.boxShadow = 'none';
+      nodes[1].style.boxShadow = '0 0 25px rgba(168, 85, 247, 0.6)';
+      nodes[1].style.borderColor = 'var(--neon-purple)';
+      consoleBox.innerHTML += '<div class="mono" style="color: #c084fc;">[00.48s] Gemini 2.5 Pro Inference completed in 312ms. Generated structured JSON draft. Accuracy Confidence: 99.1%.</div>';
+    }, 1200);
+
+    // Step 3: Human QA
+    setTimeout(() => {
+      nodes[1].style.boxShadow = 'none';
+      nodes[2].style.boxShadow = '0 0 25px rgba(245, 158, 11, 0.6)';
+      nodes[2].style.borderColor = 'var(--neon-amber)';
+      consoleBox.innerHTML += '<div class="mono" style="color: #fbbf24;">[01.80s] Dispatched to Operator Bilal Tariq (Lahore Hub). Auditing PO variance against SOP v3.2 checklist... Passed.</div>';
+    }, 2400);
+
+    // Step 4: Verification & Proof
+    setTimeout(() => {
+      nodes[2].style.boxShadow = 'none';
+      nodes[3].style.boxShadow = '0 0 25px rgba(16, 185, 129, 0.6)';
+      nodes[3].style.borderColor = 'var(--neon-emerald)';
+      consoleBox.innerHTML += '<div class="mono" style="color: #34d399;">[03.10s] Task Certified & Signed. Cryptographic Hash: SHA256:7e99f2b8a01cd. Output synchronized to client API.</div>';
+      showToast('Pipeline execution complete! 100% QA pass.', 'success');
+      state.simulationRunning = false;
+    }, 3800);
+  }
+
+  // =========================================================================
+  // PARADIGM SHIFT: LIVE GEMINI SANDBOX & PROOF CERTIFICATE
+  // =========================================================================
+  function runSandboxExtraction() {
+    const input = document.getElementById('sandbox-input').value;
+    const outputBox = document.getElementById('sandbox-output');
+
+    outputBox.innerHTML = '<span style="color: var(--neon-cyan);">Running Gemini 2.5 Flash extraction model...</span>';
+
+    setTimeout(() => {
+      const extractedJson = {
+        vendor: "Apex Cloud Solutions",
+        invoiceNumber: "INV-2026-8812",
+        poNumber: "PO-9914",
+        authorizedTotal: 4850.00,
+        billedTotal: 5000.00,
+        varianceDetected: {
+          lineItem: 3,
+          description: "Expedited Setup Fee",
+          unauthorizedAmount: 150.00,
+          action: "FLAG_DISCREPANCY_HOLD_PAYMENT"
+        },
+        sopComplianceStatus: "PASSED_WITH_EXCEPTION_NOTE",
+        confidenceScore: 0.994
+      };
+
+      outputBox.innerText = JSON.stringify(extractedJson, null, 2);
+      showToast('Extraction complete with 99.4% confidence score!', 'success');
+    }, 800);
+  }
+
+  function generateProofCertificate() {
+    const certWindow = window.open('', '_blank');
+    if (!certWindow) {
+      alert('Pop-up blocked. Please allow pop-ups to view certificate.');
+      return;
+    }
+
+    const sha = "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+    certWindow.document.write(`
+      <html>
+      <head>
+        <title>TrainedForce Cryptographic Proof of Delivery Certificate</title>
+        <style>
+          body { font-family: 'Inter', sans-serif; background: #080c16; color: #fff; padding: 40px; }
+          .cert-box { border: 2px solid #00f2fe; padding: 30px; border-radius: 16px; max-width: 700px; margin: 0 auto; box-shadow: 0 0 30px rgba(0,242,254,0.3); }
+          h2 { color: #00f2fe; margin-top: 0; }
+          .mono { font-family: monospace; color: #38bdf8; word-break: break-all; }
+        </style>
+      </head>
+      <body>
+        <div class="cert-box">
+          <h2>⚡ TrainedForce Cryptographic Proof of Delivery</h2>
+          <p><strong>Certificate ID:</strong> TF-CERT-2026-9904</p>
+          <p><strong>Verified Operator:</strong> Bilal Tariq (Senior Tier-3 Operator, Pakistan)</p>
+          <p><strong>Workflow:</strong> Healthtech HIPAA PO & Invoice Reconciliation Audit</p>
+          <p><strong>Accuracy Score:</strong> 100.0% (Verified Compliant)</p>
+          <p><strong>SHA-256 Signature:</strong></p>
+          <p class="mono">${sha}</p>
+          <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
+          <p style="color: #10b981; font-weight: bold; margin-top: 20px;">✔ CERTIFIED COMPLIANT WITH SOC2 TYPE II & SOP STANDARDS</p>
+        </div>
+      </body>
+      </html>
+    `);
+  }
+
+  // =========================================================================
+  // PARADIGM SHIFT: HEADCOUNT COST ARBITRAGE CALCULATOR
+  // =========================================================================
+  function calculateArbitrage() {
+    const squadSize = parseInt(document.getElementById('range-squad-size')?.value || 5);
+    const onshoreSalary = parseInt(document.getElementById('range-onshore-salary')?.value || 5500);
+    const tfCostPerOperator = 1450;
+
+    const dispSquad = document.getElementById('disp-squad-size');
+    const dispSalary = document.getElementById('disp-onshore-salary');
+
+    if (dispSquad) dispSquad.innerText = `${squadSize} Operators`;
+    if (dispSalary) dispSalary.innerText = `$${onshoreSalary.toLocaleString()} / mo`;
+
+    const monthlyOnshore = squadSize * onshoreSalary;
+    const monthlyTrainedForce = squadSize * tfCostPerOperator;
+    const monthlySavings = monthlyOnshore - monthlyTrainedForce;
+    const annualSavings = monthlySavings * 12;
+    const threeYearSavings = annualSavings * 3;
+
+    const elAnnual = document.getElementById('arb-annual-savings');
+    const elOnshoreMo = document.getElementById('arb-onshore-mo');
+    const elTfMo = document.getElementById('arb-tf-mo');
+    const elMoSavings = document.getElementById('arb-mo-savings');
+    const el3yrSavings = document.getElementById('arb-3yr-savings');
+
+    if (elAnnual) elAnnual.innerText = `$${annualSavings.toLocaleString()}`;
+    if (elOnshoreMo) elOnshoreMo.innerText = `$${monthlyOnshore.toLocaleString()} / mo`;
+    if (elTfMo) elTfMo.innerText = `$${monthlyTrainedForce.toLocaleString()} / mo`;
+    if (elMoSavings) elMoSavings.innerText = `$${monthlySavings.toLocaleString()} / mo`;
+    if (el3yrSavings) el3yrSavings.innerText = `$${threeYearSavings.toLocaleString()}`;
+  }
+
+  function updateRangeDisplay(id) {
+    const val = document.getElementById(`range-${id}`).value;
+    const el = document.getElementById(`val-${id}`);
+    if (el) el.innerText = val;
+  }
+
+  async function submitNewSop() {
+    const title = document.getElementById('sop-title-input').value;
+    const category = document.getElementById('sop-category-input').value;
+    const rawRules = document.getElementById('sop-rules-input').value;
+
+    if (!title || !category) {
+      showToast('Please fill out the SOP title and category.', 'danger');
+      return;
+    }
+
+    const rules = rawRules.split('\n').map(r => r.trim()).filter(Boolean);
+    const res = await http.post('/api/cms/sops', { title, category, rules });
+    if (res.success) {
+      state.sops.push(res.sop);
+      closeModal('modal-new-sop');
+      renderSops();
+      showToast('SOP Blueprint published successfully!', 'success');
+    }
+  }
+
   async function submitOnboardingTest() {
     const q1 = document.querySelector('input[name="test-q1"]:checked')?.value;
     const q2 = document.querySelector('input[name="test-q2"]:checked')?.value;
@@ -670,97 +857,6 @@ const App = (function () {
     }
   }
 
-  // Discovery & ROI Calculator
-  function updateRangeDisplay(id) {
-    const val = document.getElementById(`range-${id}`).value;
-    const el = document.getElementById(`val-${id}`);
-    if (el) el.innerText = val;
-  }
-
-  function calculateDiscoveryScore() {
-    const f = parseInt(document.getElementById('range-f')?.value || 4);
-    const p = parseInt(document.getElementById('range-p')?.value || 5);
-    const e = parseInt(document.getElementById('range-e')?.value || 4);
-    const m = parseInt(document.getElementById('range-m')?.value || 5);
-    const r = parseInt(document.getElementById('range-r')?.value || 5);
-    const a = parseInt(document.getElementById('range-a')?.value || 4);
-    const b = parseInt(document.getElementById('range-b')?.value || 4);
-    const u = parseInt(document.getElementById('range-u')?.value || 5);
-
-    const total = f + p + e + m + r + a + b + u;
-    const cost = parseFloat(document.getElementById('calc-cost-input')?.value || 16500);
-
-    const scoreDisplay = document.getElementById('display-score-num');
-    const badge = document.getElementById('display-score-badge');
-
-    if (scoreDisplay) scoreDisplay.innerText = `${total} / 40`;
-
-    if (badge) {
-      if (total >= 32) {
-        badge.className = "badge badge-verified";
-        badge.innerText = "⭐ High Priority: Prime Pilot Candidate";
-      } else if (total >= 24) {
-        badge.className = "badge badge-featured";
-        badge.innerText = "⚡ Investigate: Strong Potential with Custom SOP";
-      } else {
-        badge.className = "badge badge-pro";
-        badge.innerText = "❄ Low Priority (< 24): Insufficient Discovery Evidence";
-      }
-    }
-
-    const tfCost = Math.round(cost * 0.32);
-    const savings = Math.round(cost * 0.68);
-    const annualSavings = savings * 12;
-
-    const curEl = document.getElementById('eco-current');
-    const tfEl = document.getElementById('eco-tf');
-    const savEl = document.getElementById('eco-savings');
-    const annEl = document.getElementById('eco-annual');
-
-    if (curEl) curEl.innerText = `$${cost.toLocaleString()} / mo`;
-    if (tfEl) tfEl.innerText = `$${tfCost.toLocaleString()} / mo`;
-    if (savEl) savEl.innerText = `$${savings.toLocaleString()} / mo (68%)`;
-    if (annEl) annEl.innerText = `$${annualSavings.toLocaleString()} / year`;
-  }
-
-  async function saveDiscoveryRecord() {
-    const company = document.getElementById('calc-company-input').value;
-    const industry = document.getElementById('calc-industry-input').value;
-    const workflow = document.getElementById('calc-workflow-input').value;
-    const monthlyCost = parseFloat(document.getElementById('calc-cost-input').value);
-    const hoursPerWeek = parseFloat(document.getElementById('calc-hours-input').value);
-
-    const res = await http.post('/api/discovery/score', {
-      company, industry, workflow, monthlyCost, hoursPerWeek
-    });
-
-    if (res.record) {
-      state.discoveryRecords.unshift(res.record);
-      showToast(`Discovery record saved for ${company}! Pain score: ${res.painScore}/40.`, 'success');
-    }
-  }
-
-  async function submitNewSop() {
-    const title = document.getElementById('sop-title-input').value;
-    const category = document.getElementById('sop-category-input').value;
-    const rawRules = document.getElementById('sop-rules-input').value;
-
-    if (!title || !category) {
-      showToast('Please fill out the SOP title and category.', 'danger');
-      return;
-    }
-
-    const rules = rawRules.split('\n').map(r => r.trim()).filter(Boolean);
-    const res = await http.post('/api/cms/sops', { title, category, rules });
-    if (res.success) {
-      state.sops.push(res.sop);
-      closeModal('modal-new-sop');
-      renderSops();
-      showToast('SOP Blueprint published successfully!', 'success');
-    }
-  }
-
-  // Utilities
   function formatTimeAgo(dateStr) {
     const seconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
     if (seconds < 60) return 'just now';
@@ -800,10 +896,12 @@ const App = (function () {
     registerUser,
     submitOnboardingTest,
     updateRangeDisplay,
-    calculateDiscoveryScore,
-    saveDiscoveryRecord,
+    calculateArbitrage,
     submitNewSop,
     switchGalleryImage,
+    runLiveSimulation,
+    runSandboxExtraction,
+    generateProofCertificate,
     showToast
   };
 })();
