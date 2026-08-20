@@ -1,14 +1,10 @@
 /* 
- * TrainedForce — Upwork-Style Enterprise Design System
- * 100% Human-Crafted, Clean, Trustworthy Operations & Talent Platform
+ * TrainedForce — High-Visibility, Clean Upwork-Style Design System
+ * Crisp Typography, High Contrast, Minimal Text Density
  */
 
-/* =====================================================================
-   DESIGN TOKENS & UPWORK COLOR PALETTE
-   ===================================================================== */
-
 :root {
-  /* Upwork Signature Colors */
+  /* Core Colors */
   --upwork-green: #108a00;
   --upwork-green-hover: #14a800;
   --upwork-green-dark: #0d7000;
@@ -18,38 +14,38 @@
   --upwork-charcoal: #1d201d;
 
   /* Surfaces & Backgrounds */
-  --bg-page: #f7f9fa;
+  --bg-page: #f8faf9;
   --bg-canvas: #ffffff;
   --bg-card: #ffffff;
   --bg-subtle: #f9fbf9;
-  --bg-hover: #f3f5f3;
+  --bg-hover: #f1f5f1;
 
-  /* Typography Colors */
+  /* High Contrast Typography */
   --text-primary: #001e00;
-  --text-secondary: #222222;
-  --text-muted: #5e6d55;
-  --text-dim: #67727e;
-  --text-light: #889485;
+  --text-secondary: #1f2937;
+  --text-muted: #4b5563;
+  --text-dim: #6b7280;
+  --text-light: #9ca3af;
   --text-inverse: #ffffff;
 
   /* Borders & Dividers */
-  --border-color: #e4ebe4;
-  --border-subtle: #edf2ed;
-  --border-hover: #c4d4c4;
+  --border-color: #e5e7eb;
+  --border-subtle: #f3f4f6;
+  --border-hover: #d1d5db;
   --border-focus: #108a00;
 
-  /* Badges & Status */
-  --badge-toprated-bg: #f9f0ff;
-  --badge-toprated-text: #7312d1;
-  --badge-toprated-border: #ebd3ff;
-  --badge-success-bg: #eaf5ea;
-  --badge-success-text: #108a00;
-  --badge-urgent-bg: #fff1f0;
-  --badge-urgent-text: #d93025;
-  --badge-blue-bg: #e8f0fe;
-  --badge-blue-text: #1a73e8;
-  --badge-gray-bg: #f1f3f4;
-  --badge-gray-text: #4a5568;
+  /* Badges */
+  --badge-toprated-bg: #f5f3ff;
+  --badge-toprated-text: #7c3aed;
+  --badge-toprated-border: #ddd6fe;
+  --badge-success-bg: #ecfdf5;
+  --badge-success-text: #059669;
+  --badge-urgent-bg: #fef2f2;
+  --badge-urgent-text: #dc2626;
+  --badge-blue-bg: #eff6ff;
+  --badge-blue-text: #2563eb;
+  --badge-gray-bg: #f3f4f6;
+  --badge-gray-text: #4b5563;
 
   /* Typography */
   --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -64,20 +60,15 @@
   --radius-xl: 20px;
   --radius-pill: 9999px;
 
-  /* Shadows (Soft, Realistic, Human) */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
-  --shadow-hover: 0 8px 24px rgba(16, 138, 0, 0.12);
+  /* Soft Realistic Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03);
 
   /* Transitions */
   --trans-fast: 0.15s cubic-bezier(0.16, 1, 0.3, 1);
   --trans-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
-/* =====================================================================
-   GLOBAL RESET & BASE STYLES
-   ===================================================================== */
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -96,16 +87,15 @@ body {
   color: var(--text-secondary);
   font-family: var(--font-sans);
   font-size: 15px;
-  line-height: 1.55;
+  line-height: 1.5;
   min-height: 100vh;
-  overflow-x: hidden;
 }
 
 .container {
   width: 100%;
-  max-width: 1280px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 20px;
 }
 
 a {
@@ -122,41 +112,24 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   color: var(--text-primary);
   font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: -0.02em;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
 }
 
 .mono {
   font-family: var(--font-mono);
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
-}
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: var(--radius-pill);
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
-
 /* =====================================================================
-   TOP ANNOUNCEMENT & TRUST STRIP
+   TOP TRUST STRIP
    ===================================================================== */
 
 .top-trust-bar {
   background: var(--upwork-navy);
-  color: #d5e0d5;
-  font-size: 0.78rem;
+  color: #e2e8f0;
+  font-size: 0.8rem;
   padding: 8px 0;
   font-weight: 500;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .trust-flex {
@@ -171,7 +144,6 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   gap: 20px;
-  flex-wrap: wrap;
 }
 
 .trust-node {
@@ -184,12 +156,12 @@ h1, h2, h3, h4, h5, h6 {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #14a800;
+  background: #10b981;
   display: inline-block;
 }
 
 /* =====================================================================
-   UPWORK GLOBAL HEADER
+   HEADER
    ===================================================================== */
 
 .fl-header {
@@ -199,21 +171,20 @@ h1, h2, h3, h4, h5, h6 {
   top: 0;
   z-index: 1000;
   box-shadow: var(--shadow-sm);
-  transition: all var(--trans-fast);
 }
 
 .fl-navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 72px;
-  gap: 20px;
+  height: 68px;
+  gap: 16px;
 }
 
 .fl-nav-left {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
   flex: 1;
 }
 
@@ -222,41 +193,27 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  text-decoration: none;
 }
 
 .brand-icon-box {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   background: var(--upwork-green);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 900;
-  box-shadow: 0 2px 6px rgba(16, 138, 0, 0.25);
 }
 
 .brand-name {
   font-family: var(--font-heading);
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   font-weight: 800;
   color: var(--upwork-navy);
   letter-spacing: -0.03em;
-}
-
-.brand-badge {
-  font-size: 0.65rem;
-  font-weight: 700;
-  background: var(--upwork-green-light);
-  color: var(--upwork-green);
-  padding: 2px 7px;
-  border-radius: var(--radius-pill);
-  margin-left: 6px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
 }
 
 /* Search Box */
@@ -266,9 +223,9 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--bg-page);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-pill);
-  padding: 6px 14px;
+  padding: 6px 12px;
   width: 100%;
-  max-width: 320px;
+  max-width: 280px;
   transition: all var(--trans-fast);
   cursor: pointer;
 }
@@ -283,23 +240,22 @@ h1, h2, h3, h4, h5, h6 {
   border: none;
   background: transparent;
   outline: none;
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   width: 100%;
   color: var(--text-primary);
-  margin-left: 8px;
+  margin-left: 6px;
 }
 
 .search-kbd {
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   color: var(--text-dim);
   background: #fff;
   border: 1px solid var(--border-color);
-  padding: 1px 6px;
+  padding: 1px 5px;
   border-radius: 4px;
-  font-family: var(--font-mono);
 }
 
-/* Main Navigation Tabs */
+/* Navigation Tabs */
 .nav-links-row {
   display: flex;
   align-items: center;
@@ -311,16 +267,16 @@ h1, h2, h3, h4, h5, h6 {
   background: transparent;
   border: none;
   font-family: var(--font-heading);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 600;
   color: var(--text-muted);
-  padding: 8px 12px;
+  padding: 7px 11px;
   border-radius: var(--radius-pill);
   cursor: pointer;
   transition: all var(--trans-fast);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   white-space: nowrap;
 }
 
@@ -335,20 +291,20 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
 }
 
-/* Right Nav Controls */
+/* Right Nav */
 .fl-nav-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .user-profile-pill {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   background: var(--bg-page);
   border: 1px solid var(--border-color);
-  padding: 5px 12px 5px 6px;
+  padding: 4px 10px 4px 5px;
   border-radius: var(--radius-pill);
   cursor: pointer;
   transition: all var(--trans-fast);
@@ -357,61 +313,51 @@ h1, h2, h3, h4, h5, h6 {
 .user-profile-pill:hover {
   background: #fff;
   border-color: var(--upwork-green);
-  box-shadow: var(--shadow-sm);
 }
 
 .user-avatar-img {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.user-meta-info {
-  text-align: left;
-  line-height: 1.2;
 }
 
 .user-name-text {
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   font-weight: 700;
   color: var(--text-primary);
+  line-height: 1.2;
 }
 
 .user-role-text {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: var(--text-dim);
 }
 
-/* Category Subnav Bar */
+/* Subnav Bar */
 .category-subnav {
   background: #ffffff;
   border-top: 1px solid var(--border-subtle);
   border-bottom: 1px solid var(--border-color);
-  padding: 8px 0;
+  padding: 7px 0;
   overflow-x: auto;
   white-space: nowrap;
 }
 
 .subnav-flex {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
 }
 
 .subnav-item {
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: var(--text-muted);
-  padding: 6px 14px;
+  padding: 5px 12px;
   border-radius: var(--radius-pill);
   cursor: pointer;
   transition: all var(--trans-fast);
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 
 .subnav-item:hover {
@@ -433,16 +379,15 @@ h1, h2, h3, h4, h5, h6 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   font-family: var(--font-heading);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  padding: 10px 22px;
+  padding: 9px 20px;
   border-radius: var(--radius-pill);
   border: 1px solid transparent;
   cursor: pointer;
   transition: all var(--trans-fast);
-  text-decoration: none;
   white-space: nowrap;
 }
 
@@ -453,7 +398,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-primary:hover {
   background-color: var(--upwork-green-hover);
-  box-shadow: 0 4px 12px rgba(16, 138, 0, 0.25);
+  box-shadow: 0 4px 12px rgba(16, 138, 0, 0.2);
   color: #ffffff;
   text-decoration: none;
 }
@@ -471,25 +416,14 @@ h1, h2, h3, h4, h5, h6 {
   text-decoration: none;
 }
 
-.btn-dark {
-  background-color: var(--upwork-navy);
-  color: #ffffff;
-}
-
-.btn-dark:hover {
-  background-color: #0c2d0c;
-  color: #ffffff;
-  text-decoration: none;
-}
-
 .btn-sm {
-  padding: 6px 14px;
-  font-size: 0.82rem;
+  padding: 5px 12px;
+  font-size: 0.8rem;
 }
 
 .btn-lg {
-  padding: 13px 26px;
-  font-size: 1.02rem;
+  padding: 12px 24px;
+  font-size: 1rem;
 }
 
 /* Badges */
@@ -497,9 +431,9 @@ h1, h2, h3, h4, h5, h6 {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  padding: 3px 9px;
+  padding: 3px 8px;
   border-radius: var(--radius-pill);
   line-height: 1.2;
 }
@@ -513,64 +447,64 @@ h1, h2, h3, h4, h5, h6 {
 .badge-verified {
   background: var(--badge-success-bg);
   color: var(--badge-success-text);
-  border: 1px solid #cce8cc;
+  border: 1px solid #a7f3d0;
 }
 
 .badge-urgent {
   background: var(--badge-urgent-bg);
   color: var(--badge-urgent-text);
-  border: 1px solid #ffdcd9;
+  border: 1px solid #fecaca;
 }
 
 .badge-blue {
   background: var(--badge-blue-bg);
   color: var(--badge-blue-text);
-  border: 1px solid #d2e3fc;
+  border: 1px solid #bfdbfe;
 }
 
 .badge-gray {
   background: var(--badge-gray-bg);
   color: var(--badge-gray-text);
-  border: 1px solid #e0e0e0;
+  border: 1px solid #e5e7eb;
 }
 
 /* =====================================================================
-   HERO SECTION (Upwork Style)
+   HERO SECTION (High Impact, Minimal Text)
    ===================================================================== */
 
 .upwork-hero {
-  background: linear-gradient(180deg, #ffffff 0%, #f7f9fa 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #f8faf9 100%);
   border-bottom: 1px solid var(--border-color);
-  padding: 52px 0 44px;
+  padding: 44px 0 36px;
 }
 
 .hero-grid {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
-  gap: 44px;
+  gap: 36px;
   align-items: center;
 }
 
 .hero-tagline-badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: var(--upwork-green-light);
   color: var(--upwork-green);
   font-weight: 700;
-  font-size: 0.84rem;
-  padding: 6px 14px;
+  font-size: 0.82rem;
+  padding: 5px 12px;
   border-radius: var(--radius-pill);
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .hero-headline {
-  font-size: 3.1rem;
+  font-size: 3.2rem;
   font-weight: 800;
   color: var(--upwork-navy);
   letter-spacing: -0.035em;
-  line-height: 1.14;
-  margin-bottom: 18px;
+  line-height: 1.12;
+  margin-bottom: 14px;
 }
 
 .hero-headline .green-text {
@@ -578,34 +512,34 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .hero-subhead {
-  font-size: 1.12rem;
+  font-size: 1.1rem;
   color: var(--text-muted);
-  line-height: 1.6;
-  margin-bottom: 26px;
-  max-width: 560px;
+  line-height: 1.5;
+  margin-bottom: 22px;
+  max-width: 520px;
 }
 
 .hero-cta-group {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 
-/* Trust Metrics Strip */
+/* Metrics */
 .hero-trust-metrics {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  padding-top: 22px;
+  gap: 14px;
+  padding-top: 18px;
   border-top: 1px solid var(--border-color);
 }
 
 .metric-item strong {
   display: block;
   font-family: var(--font-heading);
-  font-size: 1.6rem;
+  font-size: 1.7rem;
   font-weight: 800;
   color: var(--upwork-navy);
   line-height: 1.1;
@@ -617,56 +551,53 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
 }
 
-/* Interactive Hero Showcase Card */
+/* Spotlight Card */
 .hero-showcase-card {
   background: #ffffff;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
-  padding: 24px;
-  position: relative;
+  padding: 22px;
 }
 
 .showcase-talent-header {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .showcase-talent-photo {
-  width: 68px;
-  height: 68px;
+  width: 62px;
+  height: 62px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid var(--upwork-green-light);
+  border: 2px solid var(--upwork-green-light);
 }
 
 .showcase-talent-name {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 800;
   color: var(--upwork-navy);
-  margin-bottom: 2px;
 }
 
 .showcase-talent-title {
-  font-size: 0.86rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
   font-weight: 600;
 }
 
 .showcase-talent-location {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: var(--text-dim);
   margin-top: 2px;
 }
 
-/* Deliverable preview inside hero card */
 .showcase-work-preview {
   background: var(--bg-page);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 14px;
+  padding: 12px 14px;
   margin-bottom: 14px;
 }
 
@@ -674,32 +605,22 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
-  font-size: 0.76rem;
+  margin-bottom: 6px;
+  font-size: 0.75rem;
 }
 
 .preview-body-text {
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   color: var(--text-secondary);
-  line-height: 1.5;
-  margin-bottom: 10px;
-}
-
-.preview-operator-note {
-  background: #ffffff;
-  border-left: 3px solid var(--upwork-green);
-  padding: 8px 12px;
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  line-height: 1.45;
 }
 
 /* =====================================================================
-   BROWSE BY CATEGORY TILES (Classic Upwork Component)
+   CATEGORY TILES
    ===================================================================== */
 
 .category-tiles-section {
-  padding: 48px 0;
+  padding: 36px 0;
   background: #ffffff;
   border-bottom: 1px solid var(--border-color);
 }
@@ -707,237 +628,207 @@ h1, h2, h3, h4, h5, h6 {
 .category-tiles-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  gap: 16px;
 }
 
 .category-tile-card {
   background: var(--bg-page);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 22px;
+  padding: 18px;
   cursor: pointer;
-  transition: all var(--trans-normal);
+  transition: all var(--trans-fast);
 }
 
 .category-tile-card:hover {
   background: #ffffff;
   border-color: var(--upwork-green);
   box-shadow: var(--shadow-md);
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 }
 
 .category-tile-icon {
-  font-size: 1.8rem;
-  margin-bottom: 12px;
+  font-size: 1.6rem;
+  margin-bottom: 8px;
 }
 
 .category-tile-title {
-  font-size: 1.05rem;
+  font-size: 0.98rem;
   font-weight: 700;
   color: var(--upwork-navy);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .category-tile-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--text-dim);
 }
 
 /* =====================================================================
-   ENTERPRISE SOCIAL PROOF & LOGOS
+   SOCIAL PROOF LOGOS
    ===================================================================== */
 
 .social-proof-bar {
   background: #ffffff;
   border-bottom: 1px solid var(--border-color);
-  padding: 28px 0;
-  text-align: center;
-}
-
-.proof-headline {
-  font-size: 0.92rem;
-  color: var(--text-muted);
-  font-weight: 600;
-  margin-bottom: 16px;
+  padding: 20px 0;
 }
 
 .logo-cloud-row {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 36px;
+  gap: 32px;
   flex-wrap: wrap;
 }
 
 .enterprise-logo-item {
   font-family: var(--font-heading);
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: #8898aa;
-  letter-spacing: -0.02em;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #64748b;
   display: flex;
   align-items: center;
-  gap: 6px;
-  opacity: 0.85;
+  gap: 5px;
 }
 
 /* =====================================================================
-   HOW IT WORKS (4-STAGE HUMAN-IN-THE-LOOP)
+   HOW IT WORKS (Clean 4 Steps)
    ===================================================================== */
 
 .how-it-works-section {
-  padding: 56px 0;
+  padding: 44px 0;
   background: #ffffff;
   border-bottom: 1px solid var(--border-color);
 }
 
 .section-title-wrap {
   text-align: center;
-  max-width: 660px;
-  margin: 0 auto 40px;
+  max-width: 500px;
+  margin: 0 auto 30px;
 }
 
 .section-title-wrap h2 {
-  font-size: 2.1rem;
+  font-size: 1.8rem;
   color: var(--upwork-navy);
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .section-title-wrap p {
-  font-size: 1.02rem;
+  font-size: 0.92rem;
   color: var(--text-muted);
 }
 
 .steps-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  gap: 16px;
 }
 
 .step-card {
   background: var(--bg-page);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 24px 20px;
-  transition: all var(--trans-normal);
-}
-
-.step-card:hover {
-  background: #ffffff;
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--upwork-green);
+  padding: 20px 16px;
 }
 
 .step-num-circle {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: var(--upwork-green-light);
   color: var(--upwork-green);
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .step-card h4 {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--upwork-navy);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .step-card p {
-  font-size: 0.86rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
-  line-height: 1.55;
+  line-height: 1.45;
 }
 
 /* =====================================================================
-   MAIN APPLICATION CONTAINER & TABS
+   MAIN APP CONTENT
    ===================================================================== */
 
 .app-main-content {
-  padding: 32px 0 56px;
+  padding: 28px 0 48px;
 }
 
 .tab-view {
-  animation: fadeIn 0.2s ease-in-out;
+  animation: fadeIn 0.15s ease-in-out;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* =====================================================================
-   VIEW 1: MARKETPLACE & PROJECT EXCHANGE (Upwork Style)
-   ===================================================================== */
-
+/* Marketplace Layout */
 .marketplace-layout {
   display: grid;
-  grid-template-columns: 270px 1fr;
-  gap: 28px;
+  grid-template-columns: 240px 1fr;
+  gap: 24px;
   align-items: start;
 }
 
-/* Sidebar Filters */
 .filter-card {
   background: #ffffff;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 18px;
-  margin-bottom: 18px;
+  padding: 16px;
+  margin-bottom: 14px;
 }
 
 .filter-header {
   font-family: var(--font-heading);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: var(--upwork-navy);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .filter-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .filter-label {
   display: flex;
   align-items: center;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-secondary);
   cursor: pointer;
-  gap: 8px;
+  gap: 6px;
 }
 
 .filter-label input[type="checkbox"], .filter-label input[type="radio"] {
   accent-color: var(--upwork-green);
-  width: 16px;
-  height: 16px;
 }
 
-.filter-count {
-  margin-left: auto;
-  font-size: 0.76rem;
-  color: var(--text-dim);
-}
-
-/* Project Cards in Feed */
+/* Project Cards */
 .project-card {
   background: #ffffff;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 24px;
-  margin-bottom: 18px;
-  transition: all var(--trans-normal);
+  padding: 20px;
+  margin-bottom: 14px;
+  transition: all var(--trans-fast);
   box-shadow: var(--shadow-sm);
 }
 
@@ -950,16 +841,15 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 10px;
+  gap: 12px;
+  margin-bottom: 8px;
 }
 
 .project-title {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--upwork-navy);
   cursor: pointer;
-  transition: color var(--trans-fast);
 }
 
 .project-title:hover {
@@ -974,58 +864,58 @@ h1, h2, h3, h4, h5, h6 {
 
 .budget-amount {
   font-family: var(--font-heading);
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 800;
   color: var(--upwork-navy);
 }
 
 .budget-subtext {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: var(--text-dim);
   text-transform: uppercase;
 }
 
 .project-meta-line {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   color: var(--text-dim);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
   flex-wrap: wrap;
 }
 
 .project-desc-body {
-  font-size: 0.9rem;
+  font-size: 0.86rem;
   color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 12px;
+  line-height: 1.5;
+  margin-bottom: 10px;
 }
 
 .ai-draft-callout {
   background: var(--bg-page);
   border-left: 3px solid var(--upwork-green);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  padding: 10px 14px;
-  font-size: 0.84rem;
+  padding: 8px 12px;
+  font-size: 0.8rem;
   color: var(--text-muted);
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .skills-pills-row {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .skill-pill {
   background: var(--bg-page);
   border: 1px solid var(--border-color);
   color: var(--text-muted);
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 600;
-  padding: 3px 9px;
+  padding: 2px 8px;
   border-radius: var(--radius-pill);
 }
 
@@ -1033,29 +923,29 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 12px;
+  padding-top: 10px;
   border-top: 1px solid var(--border-subtle);
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 8px;
 }
 
 .client-rating-info {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.82rem;
+  gap: 6px;
+  font-size: 0.78rem;
   color: var(--text-dim);
 }
 
 /* =====================================================================
-   VIEW 2: MANAGED WORKFLOW PIPELINE
-   ===================================================================== */
+   WORKFLOWS & QA STYLES
+   ==================================================================== */
 
-.workflow-studio-canvas {
+.workflow-studio-canvas, .qa-workbench-card, .squad-configurator-box, .calculator-card {
   background: #ffffff;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xl);
-  padding: 28px;
+  padding: 22px;
   box-shadow: var(--shadow-sm);
 }
 
@@ -1063,16 +953,15 @@ h1, h2, h3, h4, h5, h6 {
   display: grid;
   grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
   align-items: center;
-  gap: 12px;
-  margin: 24px 0;
+  gap: 8px;
+  margin: 18px 0;
 }
 
 .workflow-node-box {
   background: var(--bg-page);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 18px;
-  transition: all var(--trans-normal);
+  border-radius: var(--radius-md);
+  padding: 14px;
 }
 
 .workflow-node-box.active-running {
@@ -1085,131 +974,98 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .node-title {
-  font-size: 0.92rem;
+  font-size: 0.86rem;
   font-weight: 700;
   color: var(--upwork-navy);
 }
 
 .node-detail {
-  font-size: 0.8rem;
+  font-size: 0.76rem;
   color: var(--text-dim);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .node-status-pill {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   color: var(--upwork-green);
 }
 
 .node-arrow {
   color: var(--text-light);
-  font-size: 1.2rem;
-  text-align: center;
+  font-size: 1rem;
 }
 
 .workflow-terminal {
   background: #001e00;
   color: #a8d5a8;
   border-radius: var(--radius-md);
-  padding: 14px;
+  padding: 12px;
   font-family: var(--font-mono);
-  font-size: 0.8rem;
-  height: 130px;
+  font-size: 0.78rem;
+  height: 100px;
   overflow-y: auto;
-  line-height: 1.5;
-}
-
-/* =====================================================================
-   VIEW 3: QA WORKBENCH & WORK DIARY
-   ===================================================================== */
-
-.qa-workbench-card {
-  background: #ffffff;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-xl);
-  padding: 28px;
-  box-shadow: var(--shadow-sm);
 }
 
 .qa-diff-columns {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 18px;
-  margin-bottom: 20px;
+  gap: 14px;
 }
 
 .qa-col {
   background: var(--bg-page);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 18px;
+  padding: 14px;
 }
 
 .qa-col-title {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--upwork-navy);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
-  gap: 6px;
-}
-
-.qa-tokens-box {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .token-highlight {
-  padding: 6px 10px;
+  padding: 5px 8px;
   border-radius: var(--radius-sm);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
+  margin-bottom: 4px;
 }
 
 .token-highlight.normal {
   background: #ffffff;
   border: 1px solid var(--border-subtle);
-  color: var(--text-secondary);
 }
 
 .token-highlight.anomaly {
-  background: #fff0f0;
-  border: 1px solid #ffd5d5;
-  color: #c5221f;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
   font-weight: 700;
 }
 
-/* =====================================================================
-   VIEW 4: TALENT HUB & SQUADS (Upwork Freelancer Cards)
-   ===================================================================== */
-
-.squad-configurator-box {
-  background: #ffffff;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-xl);
-  padding: 28px;
-  box-shadow: var(--shadow-sm);
-  margin-bottom: 32px;
-}
-
+/* Talent Grid */
 .talent-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 22px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
 }
 
 .talent-profile-card {
   background: #ffffff;
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-xl);
-  padding: 22px;
-  transition: all var(--trans-normal);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  transition: all var(--trans-fast);
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
@@ -1219,38 +1075,35 @@ h1, h2, h3, h4, h5, h6 {
 .talent-profile-card:hover {
   border-color: var(--upwork-green);
   box-shadow: var(--shadow-md);
-  transform: translateY(-3px);
 }
 
 .talent-header-block {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .talent-photo {
-  width: 60px;
-  height: 60px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid var(--border-color);
 }
 
 .talent-name {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--upwork-navy);
 }
 
 .talent-title {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
-  font-weight: 600;
 }
 
 .talent-location {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: var(--text-dim);
 }
 
@@ -1259,68 +1112,50 @@ h1, h2, h3, h4, h5, h6 {
   grid-template-columns: 1fr 1fr 1fr;
   background: var(--bg-page);
   border-radius: var(--radius-md);
-  padding: 10px;
-  margin-bottom: 12px;
+  padding: 8px;
+  margin-bottom: 10px;
   text-align: center;
 }
 
 .talent-stat-num {
   font-family: var(--font-heading);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 800;
   color: var(--upwork-navy);
 }
 
 .talent-stat-label {
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   color: var(--text-dim);
   text-transform: uppercase;
 }
 
-/* =====================================================================
-   VIEW 5: ROI CALCULATOR & SAVINGS ENGINE
-   ===================================================================== */
-
-.calculator-card {
-  background: #ffffff;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-xl);
-  padding: 32px;
-  box-shadow: var(--shadow-sm);
-}
-
+/* Calculator Grid */
 .calc-grid {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
-  gap: 36px;
+  gap: 28px;
 }
 
 .calc-results-box {
   background: var(--upwork-navy);
   color: #ffffff;
   border-radius: var(--radius-lg);
-  padding: 28px;
+  padding: 22px;
   text-align: center;
 }
 
 .savings-big-number {
   font-family: var(--font-heading);
-  font-size: 3rem;
+  font-size: 2.6rem;
   font-weight: 800;
   color: #34d399;
   line-height: 1.1;
-  margin: 8px 0;
-}
-
-.radar-chart-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 18px 0;
+  margin: 6px 0;
 }
 
 /* =====================================================================
-   MODALS (Clean White Upwork Style)
+   MODALS
    ===================================================================== */
 
 .modal-backdrop {
@@ -1332,7 +1167,7 @@ h1, h2, h3, h4, h5, h6 {
   display: none;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 16px;
 }
 
 .modal-backdrop.active {
@@ -1341,61 +1176,49 @@ h1, h2, h3, h4, h5, h6 {
 
 .modal-dialog {
   background: #ffffff;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   width: 100%;
-  max-width: 560px;
-  padding: 30px;
+  max-width: 520px;
+  padding: 24px;
   box-shadow: var(--shadow-lg);
   position: relative;
   max-height: 90vh;
   overflow-y: auto;
-  animation: modalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes modalPop {
-  from { opacity: 0; transform: scale(0.96) translateY(6px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .modal-close {
   position: absolute;
-  top: 18px;
-  right: 18px;
+  top: 14px;
+  right: 14px;
   background: transparent;
   border: none;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   color: var(--text-dim);
   cursor: pointer;
 }
 
-.modal-close:hover {
-  color: var(--upwork-navy);
-}
-
-/* Form Controls */
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .form-label {
   display: block;
-  font-size: 0.86rem;
+  font-size: 0.82rem;
   font-weight: 700;
   color: var(--upwork-navy);
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 }
 
 .form-control {
   width: 100%;
-  padding: 9px 13px;
+  padding: 8px 11px;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
-  font-size: 0.9rem;
+  font-size: 0.86rem;
   font-family: var(--font-sans);
   color: var(--text-primary);
   background: #ffffff;
   outline: none;
-  transition: border-color var(--trans-fast);
 }
 
 .form-control:focus {
@@ -1403,89 +1226,60 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 0 0 3px rgba(16, 138, 0, 0.1);
 }
 
-textarea.form-control {
-  resize: vertical;
-}
-
-/* =====================================================================
-   TOAST NOTIFICATIONS
-   ===================================================================== */
-
+/* Toast */
 .toast-container {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: 20px;
+  right: 20px;
   z-index: 9999;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .toast {
   background: var(--upwork-navy);
   color: #ffffff;
   border-radius: var(--radius-pill);
-  padding: 11px 18px;
-  font-size: 0.86rem;
+  padding: 9px 16px;
+  font-size: 0.82rem;
   font-weight: 600;
   box-shadow: var(--shadow-lg);
   display: flex;
   align-items: center;
-  gap: 10px;
-  animation: toastSlide 0.25s ease-out;
+  gap: 8px;
 }
 
-.toast-success {
-  background: #0f5132;
-  border: 1px solid #198754;
-}
-
-.toast-danger {
-  background: #842029;
-  border: 1px solid #dc3545;
-}
-
-@keyframes toastSlide {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* =====================================================================
-   UPWORK-STYLE FOOTER
-   ===================================================================== */
-
+/* Footer */
 .upwork-footer {
   background: #001e00;
-  color: #e4ebe4;
-  padding: 56px 0 30px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  padding: 44px 0 24px;
 }
 
 .footer-grid {
   display: grid;
   grid-template-columns: 1.5fr 1fr 1fr 1fr;
-  gap: 44px;
-  margin-bottom: 44px;
+  gap: 32px;
+  margin-bottom: 32px;
 }
 
 .footer-col h5 {
   color: #ffffff;
-  font-size: 0.92rem;
-  margin-bottom: 16px;
+  font-size: 0.88rem;
+  margin-bottom: 12px;
 }
 
 .footer-links {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 7px;
 }
 
 .footer-links a {
-  color: #a8b8a8;
-  font-size: 0.85rem;
-  text-decoration: none;
-  transition: color var(--trans-fast);
+  color: #94a3b8;
+  font-size: 0.82rem;
 }
 
 .footer-links a:hover {
@@ -1494,24 +1288,20 @@ textarea.form-control {
 
 .footer-bottom-bar {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 22px;
+  padding-top: 18px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  font-size: 0.78rem;
-  color: #889888;
-  flex-wrap: wrap;
-  gap: 12px;
+  font-size: 0.75rem;
+  color: #64748b;
 }
 
 /* Responsive */
-@media (max-width: 992px) {
+@media (max-width: 900px) {
   .hero-grid, .marketplace-layout, .calc-grid, .footer-grid, .qa-diff-columns, .category-tiles-grid {
     grid-template-columns: 1fr;
   }
   .workflow-nodes-flow {
     grid-template-columns: 1fr;
-    gap: 14px;
   }
   .steps-grid {
     grid-template-columns: 1fr 1fr;
