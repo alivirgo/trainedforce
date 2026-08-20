@@ -1,6 +1,6 @@
 /**
- * TrainedForce — Upwork-Inspired Application Controller
- * Clean, Human-Centric Knowledge Workforce & QA Platform
+ * TrainedForce — Upwork-Style Application Controller
+ * Clean, Human-Centric Operations & Talent Marketplace
  */
 
 const App = (function () {
@@ -84,7 +84,7 @@ const App = (function () {
      =================================================================== */
 
   async function init() {
-    console.log('⚡ [TrainedForce] Initializing Enterprise Workforce Platform...');
+    console.log('⚡ [TrainedForce] Initializing Enterprise Talent Marketplace...');
 
     await loadInitialData();
     renderUserNav();
@@ -98,7 +98,7 @@ const App = (function () {
     bindKeyboardShortcuts();
     bindHeaderScroll();
 
-    console.log('⚡ [TrainedForce] Enterprise Platform online & ready.');
+    console.log('⚡ [TrainedForce] Platform ready.');
   }
 
   /* ===================================================================
@@ -157,11 +157,13 @@ const App = (function () {
 
     // Toggle landing sections for marketplace vs other views
     const hero = document.getElementById('hero-banner');
+    const categoryTiles = document.querySelector('.category-tiles-section');
     const howItWorks = document.getElementById('how-it-works');
     const socialProof = document.querySelector('.social-proof-bar');
     const showLanding = tabId === 'projects';
 
     if (hero) hero.style.display = showLanding ? 'block' : 'none';
+    if (categoryTiles) categoryTiles.style.display = showLanding ? 'block' : 'none';
     if (howItWorks) howItWorks.style.display = showLanding ? 'block' : 'none';
     if (socialProof) socialProof.style.display = showLanding ? 'block' : 'none';
 
@@ -357,7 +359,7 @@ const App = (function () {
           <div class="project-desc-body">${esc(t.inputSummary)}</div>
           
           <div class="ai-draft-callout">
-            <strong style="color: var(--upwork-navy);">🤖 Extraction Draft & QA Note:</strong> ${esc(t.operatorNotes || t.aiDraft)}
+            <strong style="color: var(--upwork-navy);">🤖 Extraction Draft & Operator Note:</strong> ${esc(t.operatorNotes || t.aiDraft)}
           </div>
 
           <div class="skills-pills-row">
@@ -395,29 +397,29 @@ const App = (function () {
 
     const ops = [
       {
-        name: "Bilal Tariq", loc: "Lahore, Pakistan", title: "Lead Finance & AP/AR QA Specialist",
-        photo: "/assets/avatar-bilal.jpg", rate: "$16/hr", jss: "100%", tasks: "3,840+", rating: "5.0",
+        name: "Bilal Tariq", loc: "Lahore, Pakistan", title: "Lead Finance & Accounting Specialist",
+        photo: "/assets/avatar-bilal.jpg", rate: "$16.00/hr", jss: "100%", tasks: "3,840+", rating: "5.0",
         earned: "$64k+", reviews: 62,
         badge: "Top Rated Plus",
         skills: ["PO Reconciliation", "ERP Audit", "Exception Triage", "Tax Rules", "HIPAA Compliant"]
       },
       {
         name: "Fatima Noor", loc: "Karachi, Pakistan", title: "Senior CX Support & Moderation Lead",
-        photo: "/assets/avatar-fatima.jpg", rate: "$14/hr", jss: "100%", tasks: "5,210+", rating: "5.0",
+        photo: "/assets/avatar-fatima.jpg", rate: "$14.00/hr", jss: "100%", tasks: "5,210+", rating: "5.0",
         earned: "$78k+", reviews: 94,
         badge: "Top Rated Plus",
         skills: ["Customer Empathy", "Refund Triage", "Tone Calibration", "SLA Escalation", "Zendesk API"]
       },
       {
         name: "Usman Raza", loc: "Islamabad, Pakistan", title: "Catalog Taxonomy & AI Model QA Lead",
-        photo: "/assets/avatar-usman.jpg", rate: "$15/hr", jss: "99%", tasks: "2,680+", rating: "4.9",
+        photo: "/assets/avatar-usman.jpg", rate: "$15.00/hr", jss: "99%", tasks: "2,680+", rating: "4.9",
         earned: "$42k+", reviews: 48,
         badge: "Top Rated",
         skills: ["SKU Tagging", "Multilingual QA", "Hallucination Check", "CSV Pipelines", "Google Merchant"]
       },
       {
         name: "Zainab Malik", loc: "Lahore, Pakistan", title: "RevOps B2B Signal Verification Lead",
-        photo: "/assets/avatar-zainab.jpg", rate: "$15/hr", jss: "100%", tasks: "3,120+", rating: "5.0",
+        photo: "/assets/avatar-zainab.jpg", rate: "$15.00/hr", jss: "100%", tasks: "3,120+", rating: "5.0",
         earned: "$51k+", reviews: 56,
         badge: "Top Rated Plus",
         skills: ["Executive Verification", "CRM Sync", "Tech Stack Audit", "Lead Scoring", "Apollo/HubSpot"]
@@ -466,7 +468,7 @@ const App = (function () {
 
           <div style="display: flex; gap: 8px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-color);">
             <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="App.showToast('Viewing full verified portfolio for ${op.name}', 'info')">View Profile</button>
-            <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="App.openPostProjectModal()">Hire Operator</button>
+            <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="App.openPostProjectModal()">Hire Specialist</button>
           </div>
         </div>`;
     }).join('');
@@ -554,12 +556,12 @@ const App = (function () {
     });
 
     // Stage 1: Ingestion
-    logToConsole(consoleBox, '[00.10s] Ingestion Node received raw payload from Acuity Health ERP...', '#93c5fd');
+    logToConsole(consoleBox, '[00.10s] Enterprise Intake Node received raw payload from Acuity Health ERP...', '#93c5fd');
     activateDagNode(nodes[0], stats[0], 'Ingesting Webhook...');
 
     setTimeout(() => {
       deactivateDagNode(nodes[0]);
-      logToConsole(consoleBox, '[00.45s] Foundation AI extraction completed (280ms). Extracted schemas with 98.8% confidence.', '#c4b5fd');
+      logToConsole(consoleBox, '[00.45s] Automated schema extraction completed (280ms). Extracted schemas with 98.8% confidence.', '#c4b5fd');
       activateDagNode(nodes[1], stats[1], 'Extraction Complete (98.8%)');
     }, 1200);
 
@@ -571,7 +573,7 @@ const App = (function () {
 
     setTimeout(() => {
       deactivateDagNode(nodes[2]);
-      logToConsole(consoleBox, '[02.80s] Verified deliverable synced to Acuity Health ERP with full audit proof. ✔', '#86efac');
+      logToConsole(consoleBox, '[02.80s] Verified deliverable synced to Acuity Health ERP with signed audit trail. ✔', '#86efac');
       activateDagNode(nodes[3], stats[3], '100% Certified Delivery ✔');
       showToast('Workflow execution completed with 100% QA verification!', 'success');
 
@@ -763,7 +765,7 @@ const App = (function () {
 
     if (state.currentUser) {
       if (nameEl) nameEl.textContent = state.currentUser.name;
-      if (roleEl) roleEl.textContent = state.currentUser.badge || (state.currentUser.role === 'client' ? 'Enterprise Client' : 'AI Operator');
+      if (roleEl) roleEl.textContent = state.currentUser.badge || (state.currentUser.role === 'client' ? 'Enterprise Client' : 'Operations Specialist');
       if (avatarEl) {
         if (state.currentUser.photo) {
           avatarEl.src = state.currentUser.photo;
@@ -916,15 +918,15 @@ const App = (function () {
     state.activeBidTask = task;
     document.getElementById('bid-project-title').textContent = `Submit Proposal for [${task.id}]`;
     document.getElementById('bid-project-subtitle').textContent = task.title;
-    document.getElementById('bid-proposal-text').value = 'Top-rated certified operator with 99.8% QA score. Ready to verify this task per SOP guidelines within SLA.';
+    document.getElementById('bid-proposal-text').value = 'Top-rated certified specialist with 99.8% QA score. Ready to verify this task per SOP guidelines within SLA.';
     openModal('modal-bid-task');
   }
 
   function autoGenerateProposal() {
     const task = state.activeBidTask;
     if (!task) return;
-    document.getElementById('bid-proposal-text').value = `Dear Client,\n\nI have reviewed "${task.title}". As a Top-Rated AI operator with 3,840+ verified deliverables and 100% Job Success, I will verify the extraction against your SOP and deliver within 15 minutes with complete audit proofs.\n\nBest regards,\nBilal Tariq`;
-    showToast('AI proposal cover letter generated!', 'info');
+    document.getElementById('bid-proposal-text').value = `Dear Client,\n\nI have reviewed "${task.title}". As a Top-Rated specialist with 3,840+ verified deliverables and 100% Job Success, I will verify the extraction against your SOP and deliver within 15 minutes with complete audit proofs.\n\nBest regards,\nBilal Tariq`;
+    showToast('Proposal cover letter generated!', 'info');
   }
 
   function submitBid() {
@@ -963,7 +965,7 @@ const App = (function () {
       srv_support: { t: "Customer Support SLA Exception: Trial Extension", p: "Enterprise account ($85k ARR) requests 30-day license extension citing onboarding delay." },
       srv_ecommerce: { t: "Catalog Taxonomy Tagging (40 SKUs)", p: "40 luxury footwear SKUs needing Google Merchant taxonomy categorization and attribute enrichment." },
       srv_revops: { t: "Decision Maker Contact Verification (100 Leads)", p: "100 VP Operations leads requiring LinkedIn contact verification and CRM data enrichment." },
-      srv_aiqa: { t: "LLM Model Hallucination Evaluation Batch #441", p: "50 model responses needing source fact-checking and domain safety grading." }
+      srv_aiqa: { t: "Model Hallucination Evaluation Batch #441", p: "50 model responses needing source fact-checking and domain safety grading." }
     };
     if (tpl[serviceId]) {
       if (title) title.value = tpl[serviceId].t;
