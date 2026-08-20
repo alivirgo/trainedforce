@@ -1,16 +1,6 @@
 /**
- * TrainedForce — Quantum Neural Application Controller
- * Next-Gen Enterprise AI Workforce Operating System
- * 
- * Features:
- * - Interactive WebGL/Canvas Neural Particle Network
- * - Native Web Audio API Sound Synthesis Engine
- * - Visual Multi-Agent DAG Studio & Telemetry Console
- * - Confidence Heatmap Token Diff & SHA-256 Minting
- * - Enterprise Squad Builder & Dynamic Capacity Modeling
- * - 8-Dimension Customer Discovery SVG Radar Chart
- * - SOP Compliance Sandbox & Live Rule Evaluator
- * - Theme Switcher & Instant Accent Customizer
+ * TrainedForce — Upwork-Inspired Application Controller
+ * Clean, Human-Centric Knowledge Workforce & QA Platform
  */
 
 const App = (function () {
@@ -24,8 +14,6 @@ const App = (function () {
     selectedCategory: 'all',
     selectedStatus: 'all',
     searchQuery: '',
-    currentTheme: 'cyan',
-    soundEnabled: true,
     currentUser: null,
     users: [],
     services: [],
@@ -36,184 +24,8 @@ const App = (function () {
     stats: {},
     activeInspectTask: null,
     activeBidTask: null,
-    simulationRunning: false,
-    activityFeedVisible: true,
-    activityFeedInterval: null
+    simulationRunning: false
   };
-
-  /* ===================================================================
-     NATIVE WEB AUDIO SYNTHESIZER ENGINE
-     =================================================================== */
-
-  const SoundFX = (function () {
-    let ctx = null;
-
-    function getAudioContext() {
-      if (!ctx && typeof window !== 'undefined') {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (AudioContext) ctx = new AudioContext();
-      }
-      if (ctx && ctx.state === 'suspended') {
-        ctx.resume();
-      }
-      return ctx;
-    }
-
-    function playTone(freq, duration, type = 'sine', gainVal = 0.05) {
-      if (!state.soundEnabled) return;
-      try {
-        const audioCtx = getAudioContext();
-        if (!audioCtx) return;
-
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-
-        gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
-      } catch (e) {
-        // Audio policy ignore
-      }
-    }
-
-    return {
-      click() {
-        playTone(750, 0.04, 'triangle', 0.03);
-      },
-      tab() {
-        playTone(520, 0.06, 'sine', 0.04);
-        setTimeout(() => playTone(880, 0.08, 'sine', 0.03), 30);
-      },
-      dispatch() {
-        playTone(440, 0.08, 'sine', 0.05);
-        setTimeout(() => playTone(660, 0.1, 'sine', 0.05), 60);
-        setTimeout(() => playTone(990, 0.15, 'sine', 0.04), 120);
-      },
-      success() {
-        playTone(523.25, 0.1, 'triangle', 0.05);
-        setTimeout(() => playTone(659.25, 0.12, 'triangle', 0.05), 80);
-        setTimeout(() => playTone(783.99, 0.15, 'triangle', 0.05), 160);
-        setTimeout(() => playTone(1046.50, 0.25, 'sine', 0.06), 240);
-      },
-      alert() {
-        playTone(320, 0.12, 'sawtooth', 0.06);
-        setTimeout(() => playTone(240, 0.18, 'sawtooth', 0.06), 100);
-      }
-    };
-  })();
-
-  /* ===================================================================
-     INTERACTIVE NEURAL PARTICLE CANVAS
-     =================================================================== */
-
-  const NeuralCanvas = (function () {
-    let canvas, ctx, particles = [], animationFrame;
-    const count = 45;
-    const mouse = { x: null, y: null, radius: 140 };
-
-    function initCanvas() {
-      canvas = document.getElementById('neural-canvas');
-      if (!canvas) return;
-      ctx = canvas.getContext('2d');
-
-      resize();
-      window.addEventListener('resize', resize);
-      window.addEventListener('mousemove', e => {
-        mouse.x = e.clientX;
-        mouse.y = e.clientY;
-      });
-      window.addEventListener('mouseleave', () => {
-        mouse.x = null;
-        mouse.y = null;
-      });
-
-      createParticles();
-      animate();
-    }
-
-    function resize() {
-      if (!canvas) return;
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-
-    function createParticles() {
-      particles = [];
-      for (let i = 0; i < count; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.7,
-          vy: (Math.random() - 0.5) * 0.7,
-          radius: Math.random() * 2 + 1,
-          color: Math.random() > 0.5 ? 'rgba(0, 242, 254, 0.6)' : 'rgba(168, 85, 247, 0.6)'
-        });
-      }
-    }
-
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-        // Draw particle
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.fill();
-
-        // Connect with nearby particles
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(0, 242, 254, ${0.15 * (1 - dist / 120)})`;
-            ctx.lineWidth = 0.7;
-            ctx.stroke();
-          }
-        }
-
-        // Mouse attraction
-        if (mouse.x && mouse.y) {
-          const mdx = p.x - mouse.x;
-          const mdy = p.y - mouse.y;
-          const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
-          if (mdist < mouse.radius) {
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(mouse.x, mouse.y);
-            ctx.strokeStyle = `rgba(168, 85, 247, ${0.25 * (1 - mdist / mouse.radius)})`;
-            ctx.lineWidth = 1;
-            ctx.stroke();
-          }
-        }
-      }
-
-      animationFrame = requestAnimationFrame(animate);
-    }
-
-    return { init: initCanvas };
-  })();
 
   /* ===================================================================
      HTTP CLIENT
@@ -253,11 +65,7 @@ const App = (function () {
     const container = document.getElementById('toast-container');
     if (!container) return;
 
-    if (type === 'success') SoundFX.success();
-    else if (type === 'danger') SoundFX.alert();
-    else SoundFX.click();
-
-    const icon = type === 'success' ? '✔' : type === 'danger' ? '⚠' : '⚡';
+    const icon = type === 'success' ? '✔' : type === 'danger' ? '⚠' : 'ℹ';
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
     toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
@@ -265,10 +73,10 @@ const App = (function () {
 
     setTimeout(() => {
       toast.style.opacity = '0';
-      toast.style.transform = 'translateX(40px)';
-      toast.style.transition = 'all 0.3s ease';
-      setTimeout(() => toast.remove(), 300);
-    }, 4200);
+      toast.style.transform = 'translateY(12px)';
+      toast.style.transition = 'all 0.25s ease';
+      setTimeout(() => toast.remove(), 250);
+    }, 4000);
   }
 
   /* ===================================================================
@@ -276,9 +84,8 @@ const App = (function () {
      =================================================================== */
 
   async function init() {
-    console.log('⚡ [TrainedForce] Initializing Quantum Mesh Operating System...');
+    console.log('⚡ [TrainedForce] Initializing Enterprise Workforce Platform...');
 
-    NeuralCanvas.init();
     await loadInitialData();
     renderUserNav();
     renderProjectsFeed();
@@ -287,14 +94,11 @@ const App = (function () {
     renderRadarChart(4, 5, 4, 5, 5, 4, 4, 4);
     updateSquadCalculations();
     calculateArbitrage();
-    initScrollAnimations();
     animateHeroCounters();
-    startTelemetryLoop();
-    startActivityFeed();
     bindKeyboardShortcuts();
     bindHeaderScroll();
 
-    console.log('⚡ [TrainedForce] All subsystems online & operational.');
+    console.log('⚡ [TrainedForce] Enterprise Platform online & ready.');
   }
 
   /* ===================================================================
@@ -320,39 +124,13 @@ const App = (function () {
     state.discoveryRecords = results[5] || [];
     state.squads = results[6] || [];
 
-    state.currentUser = state.users[1] || state.users[0] || {
-      id: 'usr_default', name: 'Sarah Jenkins', role: 'client',
-      company: 'Acuity Health SaaS', avatar: '💼'
+    state.currentUser = state.users.find(u => u.role === 'client') || state.users[1] || {
+      id: 'usr_client_1',
+      name: 'Sarah Jenkins',
+      role: 'client',
+      company: 'Acuity Health SaaS',
+      photo: '/assets/hero-talent.jpg'
     };
-  }
-
-  /* ===================================================================
-     THEME ACCENT & AUDIO TOGGLE
-     =================================================================== */
-
-  function setTheme(themeName) {
-    state.currentTheme = themeName;
-    document.documentElement.setAttribute('data-theme', themeName);
-    SoundFX.click();
-    showToast(`Switched theme to ${themeName.toUpperCase()}`, 'info');
-  }
-
-  function toggleSound() {
-    state.soundEnabled = !state.soundEnabled;
-    const btn = document.getElementById('btn-audio-toggle');
-    const icon = document.getElementById('audio-icon');
-    const text = document.getElementById('audio-text');
-
-    if (state.soundEnabled) {
-      btn.classList.add('active');
-      icon.textContent = '🔊';
-      text.textContent = 'Audio ON';
-      SoundFX.success();
-    } else {
-      btn.classList.remove('active');
-      icon.textContent = '🔇';
-      text.textContent = 'Audio MUTED';
-    }
   }
 
   /* ===================================================================
@@ -361,37 +139,23 @@ const App = (function () {
 
   function navigateTo(tabId) {
     state.currentTab = tabId;
-    SoundFX.tab();
 
     document.querySelectorAll('.nav-tab-btn').forEach(btn => btn.classList.remove('active'));
     const activeLink = document.getElementById(`nav-${tabId}`);
     if (activeLink) activeLink.classList.add('active');
 
-    // Crossfade views
+    // Toggle view containers
     const allViews = document.querySelectorAll('.tab-view');
     allViews.forEach(view => {
-      if (view.style.display !== 'none') {
-        view.style.opacity = '0';
-        view.style.transform = 'translateY(6px)';
-        setTimeout(() => { view.style.display = 'none'; }, 180);
-      }
+      view.style.display = 'none';
     });
 
-    setTimeout(() => {
-      const target = document.getElementById(`view-${tabId}`);
-      if (target) {
-        target.style.display = 'block';
-        target.style.opacity = '0';
-        target.style.transform = 'translateY(6px)';
-        requestAnimationFrame(() => {
-          target.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-          target.style.opacity = '1';
-          target.style.transform = 'translateY(0)';
-        });
-      }
-    }, 200);
+    const target = document.getElementById(`view-${tabId}`);
+    if (target) {
+      target.style.display = 'block';
+    }
 
-    // Show/hide hero sections on primary feed
+    // Toggle landing sections for marketplace vs other views
     const hero = document.getElementById('hero-banner');
     const howItWorks = document.getElementById('how-it-works');
     const socialProof = document.querySelector('.social-proof-bar');
@@ -405,24 +169,8 @@ const App = (function () {
   }
 
   /* ===================================================================
-     INTERSECTION OBSERVER & COUNTERS
+     ANIMATIONS & COUNTERS
      =================================================================== */
-
-  function initScrollAnimations() {
-    const elements = document.querySelectorAll('.animate-on-scroll');
-    if (!elements.length) return;
-
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-    elements.forEach(el => observer.observe(el));
-  }
 
   function animateHeroCounters() {
     const counters = document.querySelectorAll('[data-count]');
@@ -431,7 +179,7 @@ const App = (function () {
       const prefix = el.getAttribute('data-prefix') || '';
       const suffix = el.getAttribute('data-suffix') || '';
       const decimals = parseInt(el.getAttribute('data-decimals') || '0');
-      const duration = 1800;
+      const duration = 1600;
       let startTime = null;
 
       function step(timestamp) {
@@ -456,22 +204,12 @@ const App = (function () {
     });
   }
 
-  function startTelemetryLoop() {
-    setInterval(() => {
-      const latEl = document.getElementById('tele-latency');
-      if (latEl) {
-        const ms = Math.floor(275 + Math.random() * 45);
-        latEl.textContent = `Gemini 2.5 Pro (${ms}ms)`;
-      }
-    }, 3500);
-  }
-
   function bindHeaderScroll() {
     const header = document.getElementById('main-header');
     if (!header) return;
     window.addEventListener('scroll', () => {
-      if (window.scrollY > 25) header.classList.add('scrolled');
-      else header.classList.remove('scrolled');
+      if (window.scrollY > 20) header.style.boxShadow = '0 4px 16px rgba(0,0,0,0.06)';
+      else header.style.boxShadow = 'var(--shadow-sm)';
     }, { passive: true });
   }
 
@@ -489,99 +227,18 @@ const App = (function () {
   }
 
   /* ===================================================================
-     LIVE ACTIVITY FEED TICKER
-     =================================================================== */
-
-  function startActivityFeed() {
-    const feedData = [
-      { icon: '✔', text: '<strong>Bilal T. (Lahore)</strong> verified TSK-8921 (Finance QA)', color: '#34d399' },
-      { icon: '📥', text: 'Batch payload received from <strong>Acuity Health</strong>', color: '#38bdf8' },
-      { icon: '🤖', text: 'Gemini inference complete for TSK-8924 (99.2%)', color: '#c084fc' },
-      { icon: '⚡', text: '<strong>Fatima N. (Karachi)</strong> claimed TSK-8922 (Customer CX)', color: '#fbbf24' },
-      { icon: '📜', text: 'SHA-256 Proof Minted: <strong>e3b0c442...</strong>', color: '#34d399' },
-      { icon: '🚀', text: 'New dedicated squad deployed for <strong>Vanguard Logistics</strong>', color: '#00f2fe' },
-      { icon: '✍', text: '<strong>Usman R.</strong> completed RLHF benchmark (100%)', color: '#c084fc' },
-      { icon: '🎯', text: '120 RevOps lead signals verified for NexGen FinTech', color: '#38bdf8' }
-    ];
-
-    let idx = 0;
-    const body = document.getElementById('activity-feed-body');
-    if (!body) return;
-
-    for (let i = 0; i < 4; i++) {
-      addActivityItem(body, feedData[i], `${i * 35 + 10}s ago`);
-    }
-    idx = 4;
-
-    state.activityFeedInterval = setInterval(() => {
-      const item = feedData[idx % feedData.length];
-      addActivityItem(body, item, 'just now', true);
-      idx++;
-      while (body.children.length > 7) {
-        body.removeChild(body.lastChild);
-      }
-    }, 4500 + Math.random() * 2500);
-  }
-
-  function addActivityItem(container, data, timeStr, prepend) {
-    const div = document.createElement('div');
-    div.className = 'activity-item';
-    div.innerHTML = `<div class="activity-icon" style="border-color:${data.color}30;color:${data.color};">${data.icon}</div>` +
-      `<div><div class="activity-text">${data.text}</div><div style="font-size:0.68rem;color:var(--text-ghost);">${timeStr}</div></div>`;
-
-    if (prepend) container.insertBefore(div, container.firstChild);
-    else container.appendChild(div);
-  }
-
-  function toggleActivityFeed() {
-    const widget = document.getElementById('activity-feed-widget');
-    const btn = document.getElementById('feed-toggle-btn');
-    if (!widget) return;
-
-    state.activityFeedVisible = !state.activityFeedVisible;
-    widget.style.display = state.activityFeedVisible ? 'block' : 'none';
-    if (btn) btn.style.display = state.activityFeedVisible ? 'none' : 'flex';
-  }
-
-  /* ===================================================================
-     GALLERY SWITCHER
-     =================================================================== */
-
-  function switchGalleryImage(type, btn) {
-    document.querySelectorAll('.gallery-tab-btn').forEach(b => b.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-
-    const img = document.getElementById('gallery-img-display');
-    if (!img) return;
-
-    const map = {
-      dashboard: '/assets/hero-quantum.jpg',
-      pipeline: '/assets/workflow-pipeline.jpg',
-      operator: '/assets/operator-hub.jpg'
-    };
-
-    img.style.opacity = '0.3';
-    setTimeout(() => {
-      img.src = map[type] || '/assets/hero-quantum.jpg';
-      img.style.opacity = '1';
-    }, 180);
-  }
-
-  /* ===================================================================
      SEARCH & FILTERS
      =================================================================== */
 
   function filterCategory(catId, element) {
     state.selectedCategory = catId;
-    document.querySelectorAll('.subnav-link').forEach(item => item.classList.remove('active'));
+    document.querySelectorAll('.subnav-item').forEach(item => item.classList.remove('active'));
     if (element) element.classList.add('active');
-    SoundFX.click();
     renderProjectsFeed();
   }
 
   function filterStatus(status) {
     state.selectedStatus = status;
-    SoundFX.click();
     renderProjectsFeed();
   }
 
@@ -590,7 +247,9 @@ const App = (function () {
     renderProjectsFeed();
   }
 
-  function applyFilters() { renderProjectsFeed(); }
+  function applyFilters() {
+    renderProjectsFeed();
+  }
 
   function sortProjects(key) {
     if (key === 'newest') {
@@ -628,7 +287,7 @@ const App = (function () {
   }
 
   /* ===================================================================
-     RENDER: PROJECTS FEED (EXCHANGE)
+     RENDER: PROJECTS FEED (MARKETPLACE)
      =================================================================== */
 
   function renderProjectsFeed() {
@@ -655,11 +314,12 @@ const App = (function () {
     if (countBadge) countBadge.textContent = filtered.length;
 
     if (filtered.length === 0) {
-      container.innerHTML = `<div class="glass-panel" style="padding:40px;text-align:center;color:var(--text-muted);">
-        <div style="font-size:2rem;margin-bottom:8px;">📋</div>
-        <h4 style="color:#fff;">No active pipelines found</h4>
-        <p style="margin-top:4px;font-size:0.88rem;">Adjust your filters or launch a new workflow batch.</p>
-      </div>`;
+      container.innerHTML = `
+        <div style="background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 48px; text-align: center;">
+          <div style="font-size: 2.2rem; margin-bottom: 12px;">📋</div>
+          <h4 style="color: var(--upwork-navy); margin-bottom: 6px;">No matching workflow batches found</h4>
+          <p style="font-size: 0.9rem; color: var(--text-muted);">Try adjusting your category filters or post a new workflow batch.</p>
+        </div>`;
       return;
     }
 
@@ -669,57 +329,64 @@ const App = (function () {
       const ago = formatTimeAgo(t.createdAt);
       const bids = t.bids ? t.bids.length : 3;
 
-      return `<article class="project-card">
-        <div class="project-card-header">
-          <div>
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:wrap;">
-              ${urgent ? '<span class="badge badge-urgent">🔥 Urgent</span>' : ''}
-              ${verified ? '<span class="badge badge-verified">✔ Certified & Verified</span>' : '<span class="badge badge-blue">⚡ In QA Review</span>'}
-              <span class="badge badge-pro">${t.serviceId.replace('srv_', '').toUpperCase()}</span>
-              <span class="mono" style="font-size:0.72rem;color:var(--accent-primary);">${t.id}</span>
+      return `
+        <article class="project-card">
+          <div class="project-header-row">
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
+                ${urgent ? '<span class="badge badge-urgent">🔥 Urgent SLA</span>' : ''}
+                ${verified ? '<span class="badge badge-verified">✔ 100% Certified & Verified</span>' : '<span class="badge badge-blue">⚡ In Operator QA</span>'}
+                <span class="badge badge-gray">${t.serviceId.replace('srv_', '').toUpperCase()}</span>
+                <span class="mono" style="font-size: 0.76rem; color: var(--upwork-green); font-weight: 700;">${t.id}</span>
+              </div>
+              <h3 class="project-title" onclick="App.openTaskQA('${t.id}')">${esc(t.title)}</h3>
             </div>
-            <h3 class="project-title-link" onclick="App.openTaskQA('${t.id}')">${esc(t.title)}</h3>
-            <div class="project-meta">
-              <span>Ingested ${ago}</span><span>·</span>
-              <span>Client: <strong style="color:#fff;">${esc(t.clientName)}</strong></span><span>·</span>
-              <span>Operator QA: <strong>${t.workerName || 'Open Queue'}</strong></span><span>·</span>
-              <span style="color:var(--accent-primary);font-weight:700;">${bids} bids</span>
+            <div class="project-budget-box">
+              <div class="budget-amount">$0.85 / doc</div>
+              <div class="budget-subtext">Fixed Price SLA</div>
             </div>
           </div>
-          <div>
-            <div class="budget-val">$0.85/doc</div>
-            <div class="budget-type">Fixed SLA</div>
-          </div>
-        </div>
 
-        <div class="project-desc-text">${esc(t.inputSummary)}</div>
-        <div class="ai-pipeline-box"><strong style="color:var(--accent-primary);">🤖 Gemini 2.5 Inference:</strong> ${esc(t.operatorNotes || t.aiDraft)}</div>
-
-        <div class="tags-row">
-          <span class="skill-tag">#human-in-the-loop</span>
-          <span class="skill-tag">#gemini-2.5-pro</span>
-          <span class="skill-tag">#sop-compliant</span>
-          <span class="skill-tag">#sha256-seal</span>
-        </div>
-
-        <div class="project-bottom-bar">
-          <div style="display:flex;align-items:center;gap:6px;">
-            <span style="color:#f59e0b;">★★★★★</span>
-            <span><strong style="color:#fff;">5.0</strong> (62 audits)</span>
-            <span style="margin-left:6px;color:var(--neon-emerald);font-weight:700;">✔ SOC2 Verified</span>
+          <div class="project-meta-line">
+            <span>Posted ${ago}</span><span>·</span>
+            <span>Client: <strong style="color: var(--upwork-navy);">${esc(t.clientName)}</strong></span><span>·</span>
+            <span>Operator: <strong>${t.workerName || 'Open in Queue'}</strong></span><span>·</span>
+            <span style="color: var(--upwork-green); font-weight: 700;">${bids} proposals</span>
           </div>
-          <div style="display:flex;gap:6px;">
-            ${verified
-              ? `<button class="btn btn-outline btn-sm" onclick="App.inspectAuditTrail('${t.id}')">Audit Proofs (${t.auditLog.length})</button>`
-              : `<button class="btn btn-outline btn-sm" onclick="App.openBidModal('${t.id}')">💬 Bid</button><button class="btn btn-primary btn-sm" onclick="App.openTaskQA('${t.id}')">🛠️ QA Station</button>`}
+
+          <div class="project-desc-body">${esc(t.inputSummary)}</div>
+          
+          <div class="ai-draft-callout">
+            <strong style="color: var(--upwork-navy);">🤖 Extraction Draft & QA Note:</strong> ${esc(t.operatorNotes || t.aiDraft)}
           </div>
-        </div>
-      </article>`;
+
+          <div class="skills-pills-row">
+            <span class="skill-pill">#human-in-the-loop</span>
+            <span class="skill-pill">#sop-compliance</span>
+            <span class="skill-pill">#verified-sla</span>
+            <span class="skill-pill">#soc2-certified</span>
+          </div>
+
+          <div class="project-footer-bar">
+            <div class="client-rating-info">
+              <span style="color: #f59e0b;">★★★★★</span>
+              <span><strong style="color: var(--upwork-navy);">5.0</strong> (62 audits)</span>
+              <span style="margin-left: 6px; color: var(--upwork-green); font-weight: 700;">✔ Verified Enterprise Client</span>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+              ${verified
+                ? `<button class="btn btn-outline btn-sm" onclick="App.inspectAuditTrail('${t.id}')">Audit Trail (${t.auditLog.length})</button>`
+                : `<button class="btn btn-outline btn-sm" onclick="App.openBidModal('${t.id}')">💬 Submit Proposal</button>
+                   <button class="btn btn-primary btn-sm" onclick="App.openTaskQA('${t.id}')">🛠️ QA Review</button>`}
+            </div>
+          </div>
+        </article>`;
     }).join('');
   }
 
   /* ===================================================================
-     RENDER: OPERATORS & SQUAD TALENT HUB
+     RENDER: OPERATORS & TALENT HUB (Upwork Style)
      =================================================================== */
 
   function renderOperators() {
@@ -728,71 +395,80 @@ const App = (function () {
 
     const ops = [
       {
-        name: "Bilal Tariq", loc: "Lahore 🇵🇰", title: "Lead Finance & AP/AR QA Specialist",
-        avatar: "⚡", rate: "$16/hr", jss: "99.8%", tasks: "3,840", rating: "5.0",
-        online: true, completion: 98,
-        badges: ["Top Rated", "HIPAA Certified", "Gemini Master"],
-        skills: ["PO Reconciliation", "ERP Audit", "Exception Triage", "Tax Rules"]
+        name: "Bilal Tariq", loc: "Lahore, Pakistan", title: "Lead Finance & AP/AR QA Specialist",
+        photo: "/assets/avatar-bilal.jpg", rate: "$16/hr", jss: "100%", tasks: "3,840+", rating: "5.0",
+        earned: "$64k+", reviews: 62,
+        badge: "Top Rated Plus",
+        skills: ["PO Reconciliation", "ERP Audit", "Exception Triage", "Tax Rules", "HIPAA Compliant"]
       },
       {
-        name: "Fatima Noor", loc: "Karachi 🇵🇰", title: "Senior CX Support & Moderation Lead",
-        avatar: "🌟", rate: "$14/hr", jss: "99.9%", tasks: "5,210", rating: "5.0",
-        online: true, completion: 99,
-        badges: ["Preferred", "Zendesk API", "Tier-2 De-escalation"],
-        skills: ["Customer Empathy", "Refund Triage", "Tone Calibration", "SLA Escalation"]
+        name: "Fatima Noor", loc: "Karachi, Pakistan", title: "Senior CX Support & Moderation Lead",
+        photo: "/assets/avatar-fatima.jpg", rate: "$14/hr", jss: "100%", tasks: "5,210+", rating: "5.0",
+        earned: "$78k+", reviews: 94,
+        badge: "Top Rated Plus",
+        skills: ["Customer Empathy", "Refund Triage", "Tone Calibration", "SLA Escalation", "Zendesk API"]
       },
       {
-        name: "Usman Raza", loc: "Islamabad 🇵🇰", title: "Catalog Taxonomy & RLHF Specialist",
-        avatar: "🚀", rate: "$15/hr", jss: "99.5%", tasks: "2,680", rating: "4.9",
-        online: false, completion: 92,
-        badges: ["Frontier AI", "Merchant Pro", "RLHF Lead"],
-        skills: ["SKU Tagging", "Multilingual QA", "Hallucination Check", "CSV Pipelines"]
+        name: "Usman Raza", loc: "Islamabad, Pakistan", title: "Catalog Taxonomy & AI Model QA Lead",
+        photo: "/assets/avatar-usman.jpg", rate: "$15/hr", jss: "99%", tasks: "2,680+", rating: "4.9",
+        earned: "$42k+", reviews: 48,
+        badge: "Top Rated",
+        skills: ["SKU Tagging", "Multilingual QA", "Hallucination Check", "CSV Pipelines", "Google Merchant"]
       },
       {
-        name: "Zainab Malik", loc: "Lahore 🇵🇰", title: "RevOps B2B Signal Verification Lead",
-        avatar: "🎯", rate: "$15/hr", jss: "99.7%", tasks: "3,120", rating: "5.0",
-        online: true, completion: 96,
-        badges: ["Top Rated", "Apollo/HubSpot", "Executive Audit"],
-        skills: ["Executive Verification", "CRM Sync", "Tech Stack Audit", "Lead Scoring"]
+        name: "Zainab Malik", loc: "Lahore, Pakistan", title: "RevOps B2B Signal Verification Lead",
+        photo: "/assets/avatar-zainab.jpg", rate: "$15/hr", jss: "100%", tasks: "3,120+", rating: "5.0",
+        earned: "$51k+", reviews: 56,
+        badge: "Top Rated Plus",
+        skills: ["Executive Verification", "CRM Sync", "Tech Stack Audit", "Lead Scoring", "Apollo/HubSpot"]
       }
     ];
 
     container.innerHTML = ops.map(op => {
-      return `<div class="operator-card">
-        <div>
-          <div class="operator-top-info">
-            <div class="operator-avatar-box">
-              ${op.avatar}
-              ${op.online ? '<div class="operator-status-dot"></div>' : ''}
-            </div>
-            <div>
-              <div style="display:flex;align-items:center;gap:6px;">
-                <h4 style="font-size:1.1rem;color:#fff;">${op.name}</h4>
-                <span class="badge badge-verified">VERIFIED</span>
+      return `
+        <div class="talent-profile-card">
+          <div>
+            <div class="talent-header-block">
+              <img src="${op.photo}" alt="${op.name}" class="talent-photo">
+              <div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                  <span class="talent-name">${op.name}</span>
+                  <span class="badge badge-toprated">★ ${op.badge}</span>
+                </div>
+                <div class="talent-title">${op.title}</div>
+                <div class="talent-location">📍 ${op.loc}</div>
               </div>
-              <div style="font-size:0.82rem;color:var(--text-muted);">${op.title}</div>
-              <div style="font-size:0.75rem;color:var(--text-ghost);margin-top:2px;">📍 ${op.loc}</div>
+            </div>
+
+            <div class="talent-stats-row">
+              <div>
+                <div class="talent-stat-num" style="color: var(--upwork-green);">${op.jss}</div>
+                <div class="talent-stat-label">Job Success</div>
+              </div>
+              <div>
+                <div class="talent-stat-num">${op.tasks}</div>
+                <div class="talent-stat-label">Audits</div>
+              </div>
+              <div>
+                <div class="talent-stat-num" style="color: var(--upwork-navy);">${op.rate}</div>
+                <div class="talent-stat-label">Hourly Rate</div>
+              </div>
+            </div>
+
+            <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px;">
+              <strong style="color: var(--upwork-navy);">${op.earned}</strong> earned · <span style="color: #f59e0b;">★★★★★</span> 5.0 (${op.reviews} reviews)
+            </div>
+
+            <div class="skills-pills-row">
+              ${op.skills.map(s => `<span class="skill-pill">${s}</span>`).join('')}
             </div>
           </div>
 
-          <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;">
-            ${op.badges.map(b => `<span class="badge badge-featured">${b}</span>`).join('')}
+          <div style="display: flex; gap: 8px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-color);">
+            <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="App.showToast('Viewing full verified portfolio for ${op.name}', 'info')">View Profile</button>
+            <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="App.openPostProjectModal()">Hire Operator</button>
           </div>
-
-          <div class="operator-stats-box">
-            <div><div style="font-size:1rem;font-weight:800;color:var(--neon-emerald);" class="mono">${op.jss}</div><div style="font-size:0.65rem;color:var(--text-ghost);text-transform:uppercase;">Accuracy</div></div>
-            <div><div style="font-size:1rem;font-weight:800;color:#fff;" class="mono">${op.tasks}</div><div style="font-size:0.65rem;color:var(--text-ghost);text-transform:uppercase;">Audited</div></div>
-            <div><div style="font-size:1rem;font-weight:800;color:var(--accent-primary);" class="mono">${op.rate}</div><div style="font-size:0.65rem;color:var(--text-ghost);text-transform:uppercase;">Hourly</div></div>
-          </div>
-
-          <div class="tags-row">${op.skills.map(s => `<span class="skill-tag">${s}</span>`).join('')}</div>
-        </div>
-
-        <div style="display:flex;gap:6px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border-subtle);">
-          <button class="btn btn-outline btn-sm" style="flex:1;" onclick="App.showToast('Viewing verified credentials for ${op.name}', 'info')">Profile</button>
-          <button class="btn btn-primary btn-sm" style="flex:1;" onclick="App.openPostProjectModal()">Hire Operator</button>
-        </div>
-      </div>`;
+        </div>`;
     }).join('');
   }
 
@@ -805,19 +481,22 @@ const App = (function () {
     if (!container) return;
 
     container.innerHTML = state.sops.map(s => {
-      return `<div class="glass-panel" style="padding:22px;">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
-          <span class="badge badge-pro">${s.category}</span>
-          <span class="mono" style="font-size:0.72rem;color:var(--accent-primary);font-weight:800;">v${s.version}</span>
-        </div>
-        <h4 style="font-size:1.08rem;margin-bottom:10px;color:#fff;">${s.title}</h4>
-        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;font-size:0.84rem;color:#cbd5e1;">
-          ${s.rules.map(r => `<li style="display:flex;gap:7px;"><span style="color:var(--accent-primary);flex-shrink:0;">⚡</span><span>${esc(r)}</span></li>`).join('')}
-        </ul>
-        <div style="margin-top:14px;padding-top:10px;border-top:1px solid var(--border-subtle);font-size:0.74rem;color:var(--text-ghost);">
-          Updated: ${s.updatedAt} · Compliance Check: Active
-        </div>
-      </div>`;
+      return `
+        <div class="talent-profile-card">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+              <span class="badge badge-gray">${s.category}</span>
+              <span class="mono" style="font-size: 0.75rem; color: var(--upwork-green); font-weight: 700;">v${s.version}</span>
+            </div>
+            <h4 style="font-size: 1.1rem; margin-bottom: 12px; color: var(--upwork-navy);">${s.title}</h4>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 0.86rem; color: var(--text-secondary);">
+              ${s.rules.map(r => `<li style="display: flex; gap: 8px;"><span style="color: var(--upwork-green); flex-shrink: 0;">✔</span><span>${esc(r)}</span></li>`).join('')}
+            </ul>
+          </div>
+          <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border-color); font-size: 0.78rem; color: var(--text-dim);">
+            Updated: ${s.updatedAt} · Standardized Compliance
+          </div>
+        </div>`;
     }).join('');
   }
 
@@ -842,7 +521,7 @@ const App = (function () {
     const sla = (document.getElementById('sq-sla-select') || {}).value || '< 15 Mins';
 
     const res = await http.post('/api/squads/deploy', {
-      squadName: `Custom ${domain.replace('srv_', '').toUpperCase()} Squad (${size} Ops)`,
+      squadName: `Dedicated ${domain.replace('srv_', '').toUpperCase()} Squad (${size} Operators)`,
       serviceId: domain,
       squadSize: size,
       slaTarget: sla,
@@ -850,103 +529,89 @@ const App = (function () {
     });
 
     if (res.success) {
-      SoundFX.dispatch();
-      showToast(`Dedicated squad of ${size} operators deployed! Provisioning complete.`, 'success');
-      const teleSquads = document.getElementById('tele-squads');
-      if (teleSquads) teleSquads.textContent = `${state.stats.activeSquads + 1} Squads`;
+      showToast(`Dedicated squad of ${size} operators provisioned successfully!`, 'success');
     }
   }
 
   /* ===================================================================
-     VISUAL DAG STUDIO SIMULATOR
+     VISUAL WORKFLOW ORCHESTRATION SIMULATOR
      =================================================================== */
 
   function runDagSimulation() {
     if (state.simulationRunning) return;
     state.simulationRunning = true;
-    SoundFX.dispatch();
 
     const consoleBox = document.getElementById('dag-console-output');
     const nodes = ['dag-node-1', 'dag-node-2', 'dag-node-3', 'dag-node-4'];
     const stats = ['dag-stat-1', 'dag-stat-2', 'dag-stat-3', 'dag-stat-4'];
 
-    showToast('Executing multi-agent workflow DAG...', 'info');
+    showToast('Executing workflow pipeline simulation...', 'info');
     if (consoleBox) consoleBox.innerHTML = '';
 
     nodes.forEach(id => {
       const el = document.getElementById(id);
-      if (el) el.classList.remove('active-pulse');
+      if (el) el.classList.remove('active-running');
     });
 
     // Stage 1: Ingestion
-    typewriteConsole(consoleBox, '[00.10s] Ingestion Node received raw webhook payload for TSK-8921...', '#38bdf8');
-    activateDagNode(nodes[0], stats[0], 'Ingesting Webhook...', 'var(--neon-blue)');
+    logToConsole(consoleBox, '[00.10s] Ingestion Node received raw payload from Acuity Health ERP...', '#93c5fd');
+    activateDagNode(nodes[0], stats[0], 'Ingesting Webhook...');
 
     setTimeout(() => {
       deactivateDagNode(nodes[0]);
-      typewriteConsole(consoleBox, '[00.42s] Gemini 2.5 Pro inference (298ms). Extracted 10 token entities (Confidence: 98.8%).', '#c084fc');
-      activateDagNode(nodes[1], stats[1], 'Inference Complete', 'var(--neon-purple)');
-    }, 1300);
+      logToConsole(consoleBox, '[00.45s] Foundation AI extraction completed (280ms). Extracted schemas with 98.8% confidence.', '#c4b5fd');
+      activateDagNode(nodes[1], stats[1], 'Extraction Complete (98.8%)');
+    }, 1200);
 
     setTimeout(() => {
       deactivateDagNode(nodes[1]);
-      typewriteConsole(consoleBox, '[01.75s] Dispatched to Bilal Tariq (#PK-219, Lahore). SOP v3.2 Check Passed.', '#fbbf24');
-      activateDagNode(nodes[2], stats[2], 'SOP Audit Verified', '#fbbf24');
-    }, 2600);
+      logToConsole(consoleBox, '[01.60s] Dispatched to Bilal Tariq (#PK-219, Lahore). SOP v3.2 Check Passed.', '#fde047');
+      activateDagNode(nodes[2], stats[2], 'SOP Audit Verified ✔');
+    }, 2400);
 
     setTimeout(() => {
       deactivateDagNode(nodes[2]);
-      typewriteConsole(consoleBox, '[03.10s] SHA-256 Proof: e3b0c44298fc1c149afbf4c8996fb924... Synced to Acuity Health ERP. ✔', '#34d399');
-      activateDagNode(nodes[3], stats[3], '100% Certified Delivery ✔', '#34d399');
-      SoundFX.success();
-      showToast('DAG execution finished with 100% QA pass!', 'success');
+      logToConsole(consoleBox, '[02.80s] Verified deliverable synced to Acuity Health ERP with full audit proof. ✔', '#86efac');
+      activateDagNode(nodes[3], stats[3], '100% Certified Delivery ✔');
+      showToast('Workflow execution completed with 100% QA verification!', 'success');
 
       setTimeout(() => {
         deactivateDagNode(nodes[3]);
         state.simulationRunning = false;
-      }, 2000);
-    }, 3900);
+      }, 1800);
+    }, 3600);
   }
 
   function resetDagSimulation() {
     const nodes = ['dag-node-1', 'dag-node-2', 'dag-node-3', 'dag-node-4'];
     nodes.forEach(id => {
       const el = document.getElementById(id);
-      if (el) el.classList.remove('active-pulse');
+      if (el) el.classList.remove('active-running');
     });
     const consoleBox = document.getElementById('dag-console-output');
-    if (consoleBox) consoleBox.innerHTML = '<div style="color:var(--accent-primary);">[DAG Orchestrator] Standby. Click "Run Live Pipeline Simulation".</div>';
-    SoundFX.click();
-    showToast('DAG Reset to Standby', 'info');
+    if (consoleBox) consoleBox.innerHTML = '<div>[Orchestrator] Standby. Click "Run Live Pipeline Simulation".</div>';
+    showToast('Simulation reset to standby', 'info');
   }
 
-  function activateDagNode(nodeId, statId, text, glowColor) {
+  function activateDagNode(nodeId, statId, text) {
     const node = document.getElementById(nodeId);
     const stat = document.getElementById(statId);
-    if (node) node.classList.add('active-pulse');
+    if (node) node.classList.add('active-running');
     if (stat) stat.textContent = text;
   }
 
   function deactivateDagNode(nodeId) {
     const node = document.getElementById(nodeId);
-    if (node) node.classList.remove('active-pulse');
+    if (node) node.classList.remove('active-running');
   }
 
-  function typewriteConsole(container, text, color) {
+  function logToConsole(container, text, color) {
     if (!container) return;
     const line = document.createElement('div');
-    line.style.cssText = `font-size:0.78rem;color:${color};margin-bottom:4px;font-family:var(--font-mono);`;
+    line.style.color = color || '#a8d5a8';
+    line.style.marginBottom = '4px';
+    line.textContent = text;
     container.appendChild(line);
-
-    let idx = 0;
-    const timer = setInterval(() => {
-      if (idx < text.length) {
-        line.textContent += text[idx];
-        idx++;
-      } else {
-        clearInterval(timer);
-      }
-    }, 10);
     container.scrollTop = container.scrollHeight;
   }
 
@@ -984,7 +649,7 @@ const App = (function () {
   }
 
   function updateRangeDisplay(id) {
-    const val = document.getElementById(`range-${id}`).value;
+    const val = (document.getElementById(`range-${id}`) || {}).value;
     const el = document.getElementById(`val-${id}`);
     if (el) el.textContent = val;
   }
@@ -994,11 +659,11 @@ const App = (function () {
     if (!container) return;
 
     const values = [f, p, e, meas, remote, a, access, urgency];
-    const labels = ['Freq', 'Pain', 'Econ', 'Meas', 'Remote', 'AI Fit', 'Buyer', 'Urg'];
+    const labels = ['Frequency', 'Pain', 'Econ', 'Measurability', 'Remote', 'AI Fit', 'Access', 'Urgency'];
     const max = 5;
     const size = 220;
     const center = size / 2;
-    const radius = 80;
+    const radius = 75;
 
     const points = values.map((val, idx) => {
       const angle = (Math.PI * 2 / values.length) * idx - Math.PI / 2;
@@ -1018,29 +683,28 @@ const App = (function () {
       const angle = (Math.PI * 2 / labels.length) * idx - Math.PI / 2;
       const x = center + radius * Math.cos(angle);
       const y = center + radius * Math.sin(angle);
-      return `<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>`;
+      return `<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>`;
     }).join('');
 
     const labelElements = labels.map((lbl, idx) => {
       const angle = (Math.PI * 2 / labels.length) * idx - Math.PI / 2;
       const x = center + (radius + 18) * Math.cos(angle);
       const y = center + (radius + 18) * Math.sin(angle);
-      return `<text x="${x}" y="${y}" fill="#94a3b8" font-size="9" font-family="JetBrains Mono" text-anchor="middle" dominant-baseline="middle">${lbl}</text>`;
+      return `<text x="${x}" y="${y}" fill="#a8d5a8" font-size="8.5" font-family="Inter" text-anchor="middle" dominant-baseline="middle">${lbl}</text>`;
     }).join('');
 
     container.innerHTML = `
       <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-        ${backgroundPolygons.map(poly => `<polygon points="${poly}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>`).join('')}
+        ${backgroundPolygons.map(poly => `<polygon points="${poly}" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>`).join('')}
         ${axisLines}
-        <polygon points="${points}" fill="rgba(0, 242, 254, 0.25)" stroke="#00f2fe" stroke-width="2"/>
+        <polygon points="${points}" fill="rgba(74, 222, 128, 0.3)" stroke="#4ade80" stroke-width="2"/>
         ${labelElements}
       </svg>
     `;
   }
 
   function exportExecutiveReport() {
-    SoundFX.success();
-    showToast('Executive Briefing exported as PDF payload!', 'success');
+    showToast('Executive Cost Savings Brief downloaded as PDF!', 'success');
   }
 
   /* ===================================================================
@@ -1050,8 +714,7 @@ const App = (function () {
   async function testSopRules() {
     const payload = document.getElementById('sop-test-payload').value;
     const outputBox = document.getElementById('sop-test-output');
-    outputBox.innerHTML = '<span style="color:var(--accent-primary);">Analyzing payload against active SOP criteria...</span>';
-    SoundFX.dispatch();
+    outputBox.innerHTML = '<span style="color: var(--upwork-green);">Evaluating document against active SOP criteria...</span>';
 
     const res = await http.post('/api/cms/sops/test', {
       sopId: 'sop_finance_1',
@@ -1059,10 +722,9 @@ const App = (function () {
     });
 
     if (res) {
-      SoundFX.success();
-      outputBox.innerHTML = `<div style="color:#34d399;font-weight:700;">[SOP Engine] ${res.status} (Score: ${res.complianceScore}%)</div>` +
-        res.violations.map(v => `<div style="color:#fb7185;margin-top:4px;">⚠ ${v.note}</div>`).join('') +
-        res.passedRules.map(p => `<div style="color:#cbd5e1;margin-top:2px;">✔ ${p.note}</div>`).join('');
+      outputBox.innerHTML = `<div style="color: var(--upwork-green); font-weight: 700;">[SOP Evaluator] ${res.status} (Score: ${res.complianceScore}%)</div>` +
+        res.violations.map(v => `<div style="color: #dc3545; margin-top: 4px;">⚠ ${v.note}</div>`).join('') +
+        res.passedRules.map(p => `<div style="color: var(--text-secondary); margin-top: 2px;">✔ ${p.note}</div>`).join('');
       showToast(`SOP Validation complete (${res.complianceScore}%)`, res.complianceScore >= 90 ? 'success' : 'danger');
     }
   }
@@ -1072,16 +734,15 @@ const App = (function () {
      =================================================================== */
 
   async function simulateWebhookDispatch() {
-    SoundFX.dispatch();
-    showToast('Dispatching test webhook payload...', 'info');
+    showToast('Sending test webhook payload...', 'info');
 
     const res = await http.post('/api/tasks', {
-      title: "Automated Webhook Ingestion #TSK-API",
+      title: "Vendor Invoice Match #INV-902",
       serviceId: "srv_finance",
       priority: "High",
-      inputSummary: "Automated webhook ingestion via REST API Gateway.",
+      inputSummary: "Automated webhook ingestion via REST API Gateway for PO-4481.",
       clientId: state.currentUser.id,
-      clientName: state.currentUser.company || "REST Ingestion API"
+      clientName: state.currentUser.company || "Enterprise Gateway"
     });
 
     if (res.success) {
@@ -1103,7 +764,13 @@ const App = (function () {
     if (state.currentUser) {
       if (nameEl) nameEl.textContent = state.currentUser.name;
       if (roleEl) roleEl.textContent = state.currentUser.badge || (state.currentUser.role === 'client' ? 'Enterprise Client' : 'AI Operator');
-      if (avatarEl) avatarEl.textContent = state.currentUser.avatar || '👤';
+      if (avatarEl) {
+        if (state.currentUser.photo) {
+          avatarEl.src = state.currentUser.photo;
+        } else {
+          avatarEl.src = '/assets/hero-talent.jpg';
+        }
+      }
     }
     renderUserModalList();
   }
@@ -1114,16 +781,18 @@ const App = (function () {
 
     container.innerHTML = state.users.map(u => {
       const active = state.currentUser && state.currentUser.id === u.id;
-      return `<div class="glass-panel" style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;border-color:${active ? 'var(--border-glow)' : 'var(--border-subtle)'};" onclick="App.switchUser('${u.id}')">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span style="font-size:1.3rem;">${u.avatar || '👤'}</span>
-          <div>
-            <div style="font-weight:700;font-size:0.88rem;color:#fff;">${u.name}</div>
-            <div style="font-size:0.74rem;color:var(--text-ghost);">${u.company || u.badge || u.role}</div>
+      const photo = u.photo || '/assets/avatar-bilal.jpg';
+      return `
+        <div style="padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid ${active ? 'var(--upwork-green)' : 'var(--border-color)'}; background: ${active ? 'var(--upwork-green-subtle)' : '#fff'}; border-radius: var(--radius-md);" onclick="App.switchUser('${u.id}')">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <img src="${photo}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
+            <div>
+              <div style="font-weight: 700; font-size: 0.9rem; color: var(--upwork-navy);">${u.name}</div>
+              <div style="font-size: 0.78rem; color: var(--text-dim);">${u.company || u.badge || u.role}</div>
+            </div>
           </div>
-        </div>
-        <span class="badge ${u.role === 'client' ? 'badge-blue' : 'badge-verified'}">${u.role.toUpperCase()}</span>
-      </div>`;
+          <span class="badge ${u.role === 'client' ? 'badge-blue' : 'badge-verified'}">${u.role.toUpperCase()}</span>
+        </div>`;
     }).join('');
   }
 
@@ -1134,8 +803,7 @@ const App = (function () {
       renderUserNav();
       closeModal('modal-auth');
       renderProjectsFeed();
-      SoundFX.success();
-      showToast(`Switched account persona to ${u.name}`, 'success');
+      showToast(`Switched user profile to ${u.name}`, 'success');
     }
   }
 
@@ -1144,7 +812,7 @@ const App = (function () {
     const email = document.getElementById('reg-email').value;
     const role = document.getElementById('reg-role').value;
 
-    if (!name || !email) { showToast('Fill out name and email.', 'danger'); return; }
+    if (!name || !email) { showToast('Please provide your name and email.', 'danger'); return; }
 
     const res = await http.post('/api/auth/register', { name, email, role });
     if (res.success) {
@@ -1152,7 +820,6 @@ const App = (function () {
       state.currentUser = res.user;
       renderUserNav();
       closeModal('modal-auth');
-      SoundFX.success();
       showToast(`Welcome ${res.user.name}!`, 'success');
     }
   }
@@ -1172,7 +839,6 @@ const App = (function () {
     document.getElementById('qa-task-aidraft').textContent = task.aiDraft;
     document.getElementById('qa-operator-notes').value = task.operatorNotes || 'Confirmed compliant with SOP v3.2 standard. Approved.';
 
-    SoundFX.click();
     openModal('modal-qa-task');
   }
 
@@ -1190,37 +856,44 @@ const App = (function () {
       if (idx !== -1) state.tasks[idx] = res.task;
       closeModal('modal-qa-task');
       renderProjectsFeed();
-      SoundFX.success();
-      showToast(action === 'verify' ? 'Task QA passed & SHA-256 proof minted!' : 'Task escalated to Tier-3 Lead.', action === 'verify' ? 'success' : 'danger');
+      showToast(action === 'verify' ? 'Task QA passed & verified certificate signed!' : 'Task escalated to Tier-3 Lead.', action === 'verify' ? 'success' : 'danger');
     }
   }
 
   function generateProofCertificate() {
     const w = window.open('', '_blank');
-    if (!w) { alert('Enable pop-ups to view cryptographic certificate.'); return; }
+    if (!w) { alert('Enable pop-ups to view compliance certificate.'); return; }
     const sha = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
-    SoundFX.success();
 
-    w.document.write(`<html><head><title>TrainedForce SHA-256 Audit Certificate</title>
-      <style>
-        body{font-family:Inter,sans-serif;background:#030712;color:#fff;padding:40px;display:flex;justify-content:center;align-items:center;min-height:100vh;}
-        .cert{border:2px solid #00f2fe;padding:36px;border-radius:20px;max-width:680px;background:#0a1024;box-shadow:0 0 50px rgba(0,242,254,0.3);}
-        h2{color:#00f2fe;margin-top:0;font-size:1.8rem;}
-        .mono{font-family:monospace;color:#38bdf8;word-break:break-all;background:rgba(0,0,0,0.4);padding:10px;border-radius:8px;}
-      </style></head>
+    w.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>TrainedForce Verification Certificate</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Plus+Jakarta+Sans:wght@700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+        <style>
+          body { font-family: 'Inter', sans-serif; background: #f7f9fa; color: #001e00; padding: 48px; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+          .cert-box { border: 2px solid #108a00; padding: 40px; border-radius: 20px; max-width: 640px; background: #ffffff; box-shadow: 0 12px 36px rgba(0,0,0,0.08); }
+          h2 { font-family: 'Plus Jakarta Sans', sans-serif; color: #001e00; margin-top: 0; font-size: 1.8rem; font-weight: 800; }
+          .hash-box { font-family: 'JetBrains Mono', monospace; color: #108a00; word-break: break-all; background: #f2faf2; padding: 12px; border-radius: 8px; border: 1px solid #e4ebe4; font-size: 0.85rem; }
+          .badge { display: inline-block; background: #eaf5ea; color: #108a00; padding: 6px 14px; border-radius: 9999px; font-weight: 700; font-size: 0.9rem; }
+        </style>
+      </head>
       <body>
-        <div class="cert">
-          <h2>⚡ TrainedForce Cryptographic Proof of Delivery</h2>
-          <p><strong>Proof Certificate ID:</strong> TF-CERT-2026-9904</p>
-          <p><strong>Operator Signature:</strong> Bilal Tariq (Verified Level-3, Pakistan)</p>
-          <p><strong>Workflow:</strong> HIPAA Invoice PO Reconciliation</p>
-          <p><strong>Verification Pass Rate:</strong> 100.0% Verified Compliant</p>
-          <p><strong>Cryptographic SHA-256 Seal:</strong></p>
-          <p class="mono">${sha}</p>
-          <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
-          <p style="color:#10b981;font-weight:bold;margin-top:20px;font-size:1.1rem;">✔ CERTIFIED SOC2 TYPE II & HIPAA COMPLIANT</p>
+        <div class="cert-box">
+          <div class="badge">✔ SOC 2 TYPE II & HIPAA COMPLIANT</div>
+          <h2>⚡ TrainedForce Deliverable Audit Certificate</h2>
+          <p><strong>Certificate ID:</strong> TF-CERT-2026-9904</p>
+          <p><strong>Verified Operator:</strong> Bilal Tariq (Top Rated Plus · Lahore, Pakistan)</p>
+          <p><strong>Workflow:</strong> Healthtech HIPAA Invoice Match & Reconciliation</p>
+          <p><strong>Quality Assurance Score:</strong> 100.0% Verified Compliant</p>
+          <p><strong>Cryptographic Audit Proof:</strong></p>
+          <div class="hash-box">${sha}</div>
+          <p style="margin-top: 20px; font-size: 0.85rem; color: #5e6d55;"><strong>Timestamp:</strong> ${new Date().toISOString()} · Dispatched to Acuity Health ERP</p>
         </div>
-      </body></html>`);
+      </body>
+      </html>
+    `);
   }
 
   function inspectAuditTrail(taskId) {
@@ -1241,19 +914,17 @@ const App = (function () {
     const task = state.tasks.find(t => t.id === taskId);
     if (!task) return;
     state.activeBidTask = task;
-    document.getElementById('bid-project-title').textContent = `Bid on [${task.id}]`;
+    document.getElementById('bid-project-title').textContent = `Submit Proposal for [${task.id}]`;
     document.getElementById('bid-project-subtitle').textContent = task.title;
-    document.getElementById('bid-proposal-text').value = 'Certified operator with 99.8% QA score. Ready to verify this task per SOP guidelines within SLA.';
-    SoundFX.click();
+    document.getElementById('bid-proposal-text').value = 'Top-rated certified operator with 99.8% QA score. Ready to verify this task per SOP guidelines within SLA.';
     openModal('modal-bid-task');
   }
 
   function autoGenerateProposal() {
     const task = state.activeBidTask;
     if (!task) return;
-    document.getElementById('bid-proposal-text').value = `Dear Client,\n\nI have reviewed "${task.title}". As a Level-3 operator with 3,840+ verified deliverables and zero rework escalations, I will verify the Gemini 2.5 draft against your SOP and deliver within 15 minutes with complete audit proofs.\n\nBest regards.`;
-    SoundFX.success();
-    showToast('AI proposal generated!', 'info');
+    document.getElementById('bid-proposal-text').value = `Dear Client,\n\nI have reviewed "${task.title}". As a Top-Rated AI operator with 3,840+ verified deliverables and 100% Job Success, I will verify the extraction against your SOP and deliver within 15 minutes with complete audit proofs.\n\nBest regards,\nBilal Tariq`;
+    showToast('AI proposal cover letter generated!', 'info');
   }
 
   function submitBid() {
@@ -1263,8 +934,7 @@ const App = (function () {
     state.activeBidTask.bids.push({ operator: state.currentUser.name, amount });
     closeModal('modal-bid-task');
     renderProjectsFeed();
-    SoundFX.success();
-    showToast(`Bid of $${amount} submitted on ${state.activeBidTask.id}`, 'success');
+    showToast(`Proposal of $${amount} submitted on ${state.activeBidTask.id}`, 'success');
   }
 
   /* ===================================================================
@@ -1282,7 +952,6 @@ const App = (function () {
   }
 
   function openPostProjectModal() {
-    SoundFX.click();
     openModal('modal-post-project');
   }
 
@@ -1290,11 +959,11 @@ const App = (function () {
     const title = document.getElementById('post-title');
     const payload = document.getElementById('post-payload');
     const tpl = {
-      srv_finance: { t: "Vendor Invoice PO Reconciliation #INV-902", p: "Vendor: TechLogix ($14,230) vs PO-4481 ($14,200). Mismatch on line 4 freight." },
-      srv_support: { t: "Tier-2 SLA Escalation: Extension Request", p: "Enterprise ($85k ARR) requests 30-day trial extension due to delayed audit." },
-      srv_ecommerce: { t: "Catalog Taxonomy Tagging (40 SKUs)", p: "40 luxury footwear SKUs needing Google Merchant categorization." },
-      srv_revops: { t: "Decision Maker Contact Verification (100 Leads)", p: "100 VP Ops leads requiring LinkedIn contact and CRM enrichment." },
-      srv_aiqa: { t: "LLM Ground-Truth Hallucination Batch #441", p: "50 model answers needing source verification and safety grading." }
+      srv_finance: { t: "Vendor Invoice Reconciliation #INV-902", p: "Vendor: TechLogix ($14,230) vs PO-4481 ($14,200). Mismatch on line 4 expedited freight charge." },
+      srv_support: { t: "Customer Support SLA Exception: Trial Extension", p: "Enterprise account ($85k ARR) requests 30-day license extension citing onboarding delay." },
+      srv_ecommerce: { t: "Catalog Taxonomy Tagging (40 SKUs)", p: "40 luxury footwear SKUs needing Google Merchant taxonomy categorization and attribute enrichment." },
+      srv_revops: { t: "Decision Maker Contact Verification (100 Leads)", p: "100 VP Operations leads requiring LinkedIn contact verification and CRM data enrichment." },
+      srv_aiqa: { t: "LLM Model Hallucination Evaluation Batch #441", p: "50 model responses needing source fact-checking and domain safety grading." }
     };
     if (tpl[serviceId]) {
       if (title) title.value = tpl[serviceId].t;
@@ -1308,7 +977,7 @@ const App = (function () {
     const priority = document.getElementById('post-priority').value;
     const payload = document.getElementById('post-payload').value;
 
-    if (!title) { showToast('Enter a project title.', 'danger'); return; }
+    if (!title) { showToast('Please enter a job title.', 'danger'); return; }
 
     const res = await http.post('/api/tasks', {
       title, serviceId, priority,
@@ -1320,8 +989,7 @@ const App = (function () {
       state.tasks.unshift(res.task);
       closeModal('modal-post-project');
       renderProjectsFeed();
-      SoundFX.dispatch();
-      showToast(`Batch ${res.task.id} dispatched to operator queue!`, 'success');
+      showToast(`Batch ${res.task.id} published to operator queue!`, 'success');
     }
   }
 
@@ -1329,7 +997,7 @@ const App = (function () {
     const title = document.getElementById('sop-title-input').value;
     const category = document.getElementById('sop-category-input').value;
     const rawRules = document.getElementById('sop-rules-input').value;
-    if (!title || !category) { showToast('Fill title and category.', 'danger'); return; }
+    if (!title || !category) { showToast('Please provide title and category.', 'danger'); return; }
 
     const rules = rawRules.split('\n').map(r => r.trim()).filter(Boolean);
     const res = await http.post('/api/cms/sops', { title, category, rules });
@@ -1337,8 +1005,7 @@ const App = (function () {
       state.sops.push(res.sop);
       closeModal('modal-new-sop');
       renderSops();
-      SoundFX.success();
-      showToast('SOP Blueprint published!', 'success');
+      showToast('SOP guideline published successfully!', 'success');
     }
   }
 
@@ -1346,7 +1013,7 @@ const App = (function () {
     const q1 = (document.querySelector('input[name="test-q1"]:checked') || {}).value;
     const q2 = (document.querySelector('input[name="test-q2"]:checked') || {}).value;
     const q3 = (document.querySelector('input[name="test-q3"]:checked') || {}).value;
-    if (!q1 || !q2 || !q3) { showToast('Answer all questions.', 'danger'); return; }
+    if (!q1 || !q2 || !q3) { showToast('Please answer all assessment questions.', 'danger'); return; }
 
     const res = await http.post('/api/workers/onboard-test', {
       workerId: state.currentUser.id, answers: { q1, q2, q3 }
@@ -1354,7 +1021,6 @@ const App = (function () {
 
     if (res.success) {
       closeModal('modal-onboard-test');
-      SoundFX.success();
       showToast(`Score: ${res.score}% — ${res.passed ? 'CERTIFICATION PASSED!' : 'RETAKE AVAILABLE'}`, res.passed ? 'success' : 'danger');
       const u = state.users.find(x => x.id === state.currentUser.id);
       if (u) u.badge = res.badge;
@@ -1415,7 +1081,6 @@ const App = (function () {
     updateRangeDisplay,
     calculateArbitrage,
     submitNewSop,
-    switchGalleryImage,
     runDagSimulation,
     resetDagSimulation,
     testSopRules,
@@ -1425,10 +1090,7 @@ const App = (function () {
     deployCustomSquad,
     exportExecutiveReport,
     showToast,
-    openSearchModal,
-    toggleActivityFeed,
-    setTheme,
-    toggleSound
+    openSearchModal
   };
 
 })();

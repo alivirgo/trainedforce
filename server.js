@@ -514,5 +514,5 @@ app.get('*', (req, res) => {
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`⚡ TrainedForce Enterprise Quantum OS running on http://0.0.0.0:${PORT}`);
+  console.log(`⚡ TrainedForce Enterprise Workforce Platform running on http://0.0.0.0:${PORT}`);
 });
